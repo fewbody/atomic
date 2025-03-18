@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黑体辐射模拟器 | Blackbody Radiation Simulator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 95vh;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        .slider-container {
+            flex-grow: 1;
+            margin-right: 20px;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        #temperature-slider {
+            width: 300px;
+        }
+        #temperature-input {
+            width: 80px;
+            text-align: right;
+            padding: 5px;
+            margin-left: 10px;
+        }
+        .temperature-units {
+            margin-left: 5px;
+        }
+        #canvas-container {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+        canvas {
+            display: block;
+            background-color: white;
+        }
+        .info-panel {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        .formula-box, .result-box {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            flex-basis: 48%;
+        }
+        .formula-box h3, .result-box h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .formula {
+            font-style: italic;
+            margin: 10px 0;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .results {
+            line-height: 1.6;
+        }
+        .peak-line {
+            position: absolute;
+            top: 0;
+            border-left: 2px dashed rgba(255, 0, 0, 0.7);
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .peak-label {
+            position: absolute;
+            background-color: rgba(255, 0, 0, 0.1);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 12px;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .constants {
+            font-size: 0.9em;
+            margin-top: 10px;
+            color: #666;
+        }
+        .visible-light-band {
+            position: absolute;
+            height: 15px;
+            bottom: 71px;
+            background: linear-gradient(to right, 
+                #8B00FF, #4B0082, #0000FF, 
+                #00FFFF, #00FF00, #FFFF00, 
+                #FF7F00, #FF0000);
+            opacity: 0.7;
+            border-radius: 2px;
+            z-index: 5;
+        }
+        .visible-light-marker {
+            position: absolute;
+            border-top: 1px dashed rgba(0, 0, 0, 0.3);
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .visible-light-label {
+            position: absolute;
+            font-size: 12px;
+            color: #333;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 2px 5px;
+            border-radius: 3px;
+            z-index: 6;
+        }
+        .footer {
+            text-align: center;
+            padding: 15px;
+            margin-top: auto;
+            background-color: #f0f0f0;
+            border-top: 1px solid #ddd;
+            border-radius: 0 0 8px 8px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>黑体辐射模拟器 | Blackbody Radiation Simulator</h1>
+        
+        <div class="controls">
+            <div class="slider-container">
+                <label for="temperature-slider">温度 (Temperature):</label>
+                <input type="range" id="temperature-slider" min="1000" max="10000" step="100" value="5000">
+                <input type="number" id="temperature-input" min="1000" max="10000" step="100" value="5000">
+                <span class="temperature-units">K</span>
+            </div>
+        </div>
+        
+        <div id="canvas-container">
+            <canvas id="radiation-canvas" width="850" height="500"></canvas>
+            <div id="peak-line" class="peak-line"></div>
+            <div id="peak-label" class="peak-label"></div>
+            <div id="visible-light-band" class="visible-light-band"></div>
+            <div id="visible-light-start" class="visible-light-marker"></div>
+            <div id="visible-light-end" class="visible-light-marker"></div>
+            <div id="visible-light-start-label" class="visible-light-label">380nm</div>
+            <div id="visible-light-end-label" class="visible-light-label">780nm</div>
+            <div id="visible-light-title" class="visible-light-label">可见光范围</div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="formula-box">
+                <h3>物理公式 (Physical Formulas)</h3>
+                <div class="formula">
+                    <strong>普朗克黑体辐射公式 (Planck's Law):</strong><br>
+                    B<sub>λ</sub>(λ,T) = (2hc²/λ⁵) · (1/(e<sup>hc/λkT</sup> - 1))
+                </div>
+                <div class="formula">
+                    <strong>维恩位移定律 (Wien's Displacement Law):</strong><br>
+                    λ<sub>max</sub> = b/T，其中 b ≈ 2.8978 × 10<sup>-3</sup> m·K
+                </div>
+                <div class="constants">
+                    h = 普朗克常数 = 6.626 × 10<sup>-34</sup> J·s<br>
+                    c = 光速 = 2.998 × 10<sup>8</sup> m/s<br>
+                    k = 玻尔兹曼常数 = 1.381 × 10<sup>-23</sup> J/K
+                </div>
+            </div>
+            <div class="result-box">
+                <h3>计算结果 (Results)</h3>
+                <div class="results" id="results-container">
+                    <p>温度 (Temperature): <span id="display-temperature">5000</span> K</p>
+                    <p>峰值波长 (Peak Wavelength): <span id="peak-wavelength">0</span> nm</p>
+                    <p>峰值辐射强度 (Peak Intensity): <span id="peak-intensity">0</span> W/m²/nm</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            同济大学原子物理课程智能教学平台
+        </div>
+    </div>
+    
+    <script>
+        // 物理常数
+        const h = 6.62607015e-34; // 普朗克常数 (J·s)
+        const c = 2.99792458e8;   // 光速 (m/s)
+        const k = 1.380649e-23;   // 玻尔兹曼常数 (J/K)
+        const b = 2.8977719e-3;   // 维恩常数 (m·K)
+        
+        // DOM 元素
+        const canvas = document.getElementById('radiation-canvas');
+        const ctx = canvas.getContext('2d');
+        const tempSlider = document.getElementById('temperature-slider');
+        const tempInput = document.getElementById('temperature-input');
+        const displayTemp = document.getElementById('display-temperature');
+        const peakWavelengthEl = document.getElementById('peak-wavelength');
+        const peakIntensityEl = document.getElementById('peak-intensity');
+        const peakLine = document.getElementById('peak-line');
+        const peakLabel = document.getElementById('peak-label');
+        const visibleLightBand = document.getElementById('visible-light-band');
+        const visibleLightStart = document.getElementById('visible-light-start');
+        const visibleLightEnd = document.getElementById('visible-light-end');
+        const visibleLightStartLabel = document.getElementById('visible-light-start-label');
+        const visibleLightEndLabel = document.getElementById('visible-light-end-label');
+        const visibleLightTitle = document.getElementById('visible-light-title');
+        
+        // 坐标轴和图形参数
+        const padding = {top: 50, right: 50, bottom: 70, left: 80};
+        const width = canvas.width - padding.left - padding.right;
+        const height = canvas.height - padding.top - padding.bottom;
+        
+        // 波长范围 (nm)
+        const minWavelength = 100;
+        const maxWavelength = 3000;
+        
+        // 初始化温度值
+        let temperature = parseInt(tempSlider.value);
+        
+        // 可见光范围 (nm)
+        const visibleLightMin = 380;
+        const visibleLightMax = 780;
+        
+        // 计算普朗克公式
+        function planckLaw(wavelength, temp) {
+            // 波长从nm转换为m
+            const lambda = wavelength * 1e-9;
+            
+            // 计算黑体辐射谱
+            const exp_term = Math.exp(h * c / (lambda * k * temp));
+            if (exp_term === Infinity) return 0;
+            
+            const spectral_radiance = (2 * h * c * c) / (Math.pow(lambda, 5)) / (exp_term - 1);
+            
+            // 转换为更合适的单位（W/m²/nm）
+            return spectral_radiance * 1e-9;
+        }
+        
+        // 计算维恩位移定律
+        function wienDisplacement(temp) {
+            return b / temp * 1e9; // 转换为nm
+        }
+        
+        // 找到给定温度下的峰值波长和强度
+        function findPeakIntensity(temp) {
+            const peakWavelength = wienDisplacement(temp);
+            const peakIntensity = planckLaw(peakWavelength, temp);
+            return {peakWavelength, peakIntensity};
+        }
+        
+        // 根据温度获取颜色
+        function getTemperatureColor(temp) {
+            // 简单的颜色映射：从红色到黄色到白色
+            const minTemp = 1000;
+            const maxTemp = 10000;
+            const normalizedTemp = Math.min(1, (temp - minTemp) / (maxTemp - minTemp));
+            
+            let r = 255;
+            let g = Math.floor(normalizedTemp * 255);
+            let b = Math.floor(Math.pow(normalizedTemp, 2) * 255);
+            
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+        
+        // 绘制坐标轴
+        function drawAxes(maxIntensity) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = '14px Arial';
+            ctx.fillStyle = '#333';
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            
+            // 设置可见光范围标记
+            const visibleStartX = padding.left + ((visibleLightMin - minWavelength) / (maxWavelength - minWavelength)) * width;
+            const visibleEndX = padding.left + ((visibleLightMax - minWavelength) / (maxWavelength - minWavelength)) * width;
+            
+            // 设置可见光带位置和宽度
+            visibleLightBand.style.left = `${visibleStartX}px`;
+            visibleLightBand.style.width = `${visibleEndX - visibleStartX}px`;
+            
+            // 设置可见光开始和结束标记
+            visibleLightStart.style.left = `${visibleStartX}px`;
+            visibleLightStart.style.height = `${height}px`;
+            visibleLightStart.style.top = `${padding.top}px`;
+            
+            visibleLightEnd.style.left = `${visibleEndX}px`;
+            visibleLightEnd.style.height = `${height}px`;
+            visibleLightEnd.style.top = `${padding.top}px`;
+            
+            // 设置可见光标签位置
+            visibleLightStartLabel.style.left = `${visibleStartX - 15}px`;
+            visibleLightStartLabel.style.top = `${padding.top + height + 5}px`;
+            
+            visibleLightEndLabel.style.left = `${visibleEndX - 15}px`;
+            visibleLightEndLabel.style.top = `${padding.top + height + 5}px`;
+            
+            // 设置可见光标题位置
+            visibleLightTitle.style.left = `${(visibleStartX + visibleEndX)/2 - 40}px`;
+            visibleLightTitle.style.top = `${padding.top + height - 30}px`;
+            
+            // X轴 (波长)
+            ctx.beginPath();
+            ctx.moveTo(padding.left, canvas.height - padding.bottom);
+            ctx.lineTo(canvas.width - padding.right, canvas.height - padding.bottom);
+            ctx.stroke();
+            
+            // Y轴 (辐射强度)
+            ctx.beginPath();
+            ctx.moveTo(padding.left, canvas.height - padding.bottom);
+            ctx.lineTo(padding.left, padding.top);
+            ctx.stroke();
+            
+            // X轴刻度和标签
+            const xStep = width / 6;
+            const wavelengthStep = (maxWavelength - minWavelength) / 6;
+            for (let i = 0; i <= 6; i++) {
+                const x = padding.left + i * xStep;
+                const wavelength = minWavelength + i * wavelengthStep;
+                
+                // 刻度线
+                ctx.beginPath();
+                ctx.moveTo(x, canvas.height - padding.bottom);
+                ctx.lineTo(x, canvas.height - padding.bottom + 5);
+                ctx.stroke();
+                
+                // 标签
+                ctx.textAlign = 'center';
+                ctx.fillText(Math.round(wavelength), x, canvas.height - padding.bottom + 20);
+            }
+            
+            // Y轴刻度和标签
+            const yStep = height / 5;
+            const intensityStep = maxIntensity / 5;
+            for (let i = 0; i <= 5; i++) {
+                const y = canvas.height - padding.bottom - i * yStep;
+                const intensity = i * intensityStep;
+                
+                // 刻度线
+                ctx.beginPath();
+                ctx.moveTo(padding.left, y);
+                ctx.lineTo(padding.left - 5, y);
+                ctx.stroke();
+                
+                // 科学计数法格式
+                const intensityDisplay = intensity.toExponential(1);
+                
+                // 标签
+                ctx.textAlign = 'right';
+                ctx.fillText(intensityDisplay, padding.left - 10, y + 5);
+            }
+            
+            // 轴标签
+            ctx.textAlign = 'center';
+            ctx.fillText('波长 (Wavelength) (nm)', canvas.width / 2, canvas.height - padding.bottom / 2);
+            
+            ctx.save();
+            ctx.translate(padding.left / 3, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('辐射强度 (Spectral Radiance) (W/m²/nm)', 0, 0);
+            ctx.restore();
+            
+            // 标题
+            ctx.textAlign = 'center';
+            ctx.font = '16px Arial';
+            ctx.fillText(`温度 ${temperature} K 下的黑体辐射谱 (Blackbody Spectrum at ${temperature} K)`, canvas.width / 2, padding.top / 2);
+        }
+        
+        // 绘制辐射曲线
+        function drawCurve(temp) {
+            const {peakWavelength, peakIntensity} = findPeakIntensity(temp);
+            
+            // 找出整个波长范围内的最大强度
+            let maxIntensity = 0;
+            for (let wavelength = minWavelength; wavelength <= maxWavelength; wavelength += 10) {
+                const intensity = planckLaw(wavelength, temp);
+                if (intensity > maxIntensity) {
+                    maxIntensity = intensity;
+                }
+            }
+            
+            // 画坐标轴
+            drawAxes(maxIntensity * 1.1); // 给Y轴留出10%的空间
+            
+            // 画辐射曲线
+            ctx.beginPath();
+            const color = getTemperatureColor(temp);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            
+            let firstPoint = true;
+            for (let wavelength = minWavelength; wavelength <= maxWavelength; wavelength += 5) {
+                const intensity = planckLaw(wavelength, temp);
+                
+                // 归一化坐标
+                const x = padding.left + ((wavelength - minWavelength) / (maxWavelength - minWavelength)) * width;
+                const y = canvas.height - padding.bottom - (intensity / maxIntensity) * height;
+                
+                if (firstPoint) {
+                    ctx.moveTo(x, y);
+                    firstPoint = false;
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+            
+            // 显示维恩位移线
+            const peakX = padding.left + ((peakWavelength - minWavelength) / (maxWavelength - minWavelength)) * width;
+            
+            // 设置峰值线的位置
+            peakLine.style.left = `${peakX}px`;
+            
+            // 设置峰值标签的位置和内容
+            peakLabel.style.left = `${peakX + 5}px`;
+            peakLabel.style.top = `${padding.top + 10}px`;
+            peakLabel.textContent = `λ_max = ${peakWavelength.toFixed(0)} nm`;
+            
+            // 更新结果显示
+            displayTemp.textContent = temp;
+            peakWavelengthEl.textContent = peakWavelength.toFixed(0);
+            peakIntensityEl.textContent = peakIntensity.toExponential(3);
+        }
+        
+        // 更新温度并重绘
+        function updateTemperature() {
+            temperature = parseInt(this.value);
+            tempSlider.value = temperature;
+            tempInput.value = temperature;
+            drawCurve(temperature);
+        }
+        
+        // 事件监听
+        tempSlider.addEventListener('input', updateTemperature);
+        tempInput.addEventListener('change', updateTemperature);
+        
+        // 初始绘制
+        drawCurve(temperature);
+    </script>
+</body>
+</html>
