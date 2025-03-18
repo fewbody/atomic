@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>弗兰克-赫兹实验模拟</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .experiment-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        .experiment-diagram {
+            flex: 1;
+            min-width: 300px;
+            margin-right: 20px;
+        }
+        .experiment-controls {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .graph-container {
+            position: relative;
+            width: 100%;
+            margin-top: 20px;
+        }
+        #voltage-graph {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        .control-group {
+            margin: 15px 0;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+        }
+        #voltage-slider {
+            flex: 1;
+            margin: 0 10px;
+        }
+        .value-display {
+            width: 80px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .explanation {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+        }
+        .info-box {
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #e8f4fc;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .value-box {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #2c3e50;
+            color: white;
+            border-radius: 4px;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 0 10px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 10px;
+            margin-right: 5px;
+        }
+        .peak-indicator {
+            position: absolute;
+            width: 1px;
+            background-color: rgba(255, 0, 0, 0.5);
+            height: 400px;
+            pointer-events: none;
+        }
+        .peak-label {
+            position: absolute;
+            background-color: rgba(255, 0, 0, 0.8);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>弗兰克-赫兹实验虚拟模拟</h1>
+        <div style="text-align: center; margin-bottom: 15px; color: #777;">实验激发电势点：4.1V, 9.0V, 13.9V, 18.8V, 23.7V, 28.6V (间隔4.9V)</div>
+        
+        <div class="experiment-container">
+            <div class="experiment-diagram">
+                <svg width="100%" height="250" viewBox="0 0 400 250">
+                    <!-- Glass tube -->
+                    <rect x="50" y="50" width="300" height="150" rx="10" ry="10" 
+                          fill="none" stroke="#444" stroke-width="2" stroke-dasharray="5,5"/>
+                    
+                    <!-- Cathode -->
+                    <rect x="80" y="100" width="10" height="50" fill="#666" stroke="#444"/>
+                    <text x="85" y="170" text-anchor="middle" font-size="12">K</text>
+                    
+                    <!-- Grid -->
+                    <line x1="150" y1="75" x2="150" y2="175" stroke="#444" stroke-width="1" stroke-dasharray="2,2"/>
+                    <line x1="155" y1="75" x2="155" y2="175" stroke="#444" stroke-width="1" stroke-dasharray="2,2"/>
+                    <line x1="160" y1="75" x2="160" y2="175" stroke="#444" stroke-width="1" stroke-dasharray="2,2"/>
+                    <text x="155" y="195" text-anchor="middle" font-size="12">G</text>
+                    
+                    <!-- Anode -->
+                    <rect x="280" y="100" width="10" height="50" fill="#666" stroke="#444"/>
+                    <text x="285" y="170" text-anchor="middle" font-size="12">A</text>
+                    
+                    <!-- Mercury atoms -->
+                    <circle cx="95" cy="90" r="4" fill="#b7b7b7"/>
+                    <circle cx="120" cy="130" r="4" fill="#b7b7b7"/>
+                    <circle cx="140" cy="100" r="4" fill="#b7b7b7"/>
+                    <circle cx="110" cy="110" r="4" fill="#b7b7b7"/>
+                    <circle cx="130" cy="90" r="4" fill="#b7b7b7"/>
+                    <circle cx="115" cy="140" r="4" fill="#b7b7b7"/>
+                    <circle cx="135" cy="120" r="4" fill="#b7b7b7"/>
+                    <circle cx="145" cy="80" r="4" fill="#b7b7b7"/>
+                    <text x="125" y="75" text-anchor="middle" font-size="12" fill="#444">汞蒸气</text>
+                    
+                    <!-- Electrons -->
+                    <circle id="electron1" cx="90" cy="125" r="2" fill="#3498db"/>
+                    <circle id="electron2" cx="120" cy="125" r="2" fill="#3498db"/>
+                    <circle id="electron3" cx="140" cy="125" r="2" fill="#3498db"/>
+                    <circle id="electron4" cx="200" cy="125" r="2" fill="#3498db"/>
+                    <circle id="electron5" cx="270" cy="125" r="2" fill="#3498db"/>
+                    
+                    <!-- Regions labels -->
+                    <text x="125" y="165" text-anchor="middle" font-size="10" fill="#444">加速区</text>
+                    <text x="220" y="165" text-anchor="middle" font-size="10" fill="#444">减速区 (-0.5V)</text>
+                    
+                    <!-- Current meter connection -->
+                    <line x1="285" y1="100" x2="285" y2="60" stroke="#444" stroke-width="1"/>
+                    <line x1="285" y1="40" x2="285" y2="20" stroke="#444" stroke-width="1"/>
+                    
+                    <!-- Accelerating voltage -->
+                    <line x1="85" y1="200" x2="155" y2="200" stroke="#444" stroke-width="1"/>
+                    <circle cx="85" cy="200" r="3" fill="#444"/>
+                    <circle cx="155" cy="200" r="3" fill="#444"/>
+                    <text x="120" y="215" text-anchor="middle" font-size="12">U加速 (0-30V)</text>
+                    
+                    <!-- Retarding voltage -->
+                    <line x1="245" y1="200" x2="315" y2="200" stroke="#444" stroke-width="1"/>
+                    <circle cx="245" cy="200" r="3" fill="#444"/>
+                    <circle cx="315" cy="200" r="3" fill="#444"/>
+                    <text x="280" y="215" text-anchor="middle" font-size="12">U减速 (-0.5V)</text>
+                    
+                    <!-- Current meter -->
+                    <rect x="270" y="40" width="30" height="20" fill="none" stroke="#444" stroke-width="1"/>
+                    <text x="285" y="54" text-anchor="middle" font-size="10">A</text>
+                </svg>
+            </div>
+            
+            <div class="experiment-controls">
+                <div class="info-box">
+                    调整K与G之间的加速电压，观察A极电流的变化。G与A之间存在-0.5V的减速电压。当加速电压达到4.1V、9.0V、13.9V、18.8V、23.7V和28.6V时（起始为4.1V，之后每增加4.9V），电子与汞原子发生非弹性碰撞，将能量传递给原子使其跃迁，电子剩余能量不足以克服减速电场，导致A极电流明显下降。
+                </div>
+                
+                <div class="control-group">
+                    <label>加速电压 (V):</label>
+                    <div class="slider-container">
+                        <span class="value-display">0</span>
+                        <input type="range" id="voltage-slider" min="0" max="30" step="0.1" value="0">
+                        <span class="value-display" id="voltage-value">0.0</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>当前电流:</label>
+                    <div class="value-box" id="current-value">0.00 μA</div>
+                </div>
+                
+                <button id="reset-button">重置图表</button>
+            </div>
+        </div>
+        
+        <div class="graph-container">
+            <canvas id="voltage-graph"></canvas>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #3498db;"></div>
+                    <span>电流-电压曲线</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: rgba(255, 0, 0, 0.5);"></div>
+                    <span>激发电势点</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="explanation">
+            <h3>弗兰克-赫兹实验原理</h3>
+            <p>弗兰克-赫兹实验是量子物理学中的一个重要实验，由詹姆斯·弗兰克（James Franck）和古斯塔夫·赫兹（Gustav Hertz）于1914年首次完成。该实验为玻尔的原子模型中离散能级的存在提供了直接的实验证据。</p>
+            
+            <h4>实验原理及过程：</h4>
+            <ol>
+                <li>电子由热阴极K出发，在K与G之间的电场作用下使电子加速，KG间充满了汞蒸汽，即实验对象是汞原子；</li>
+                <li>在G与A之间有-0.5V的反电压，当电子通过KG空间，进入GA空间时，如果仍有较大能量，就能冲过反电场而到达电极A，并通过电流计；</li>
+                <li>若电子在KG空间与原子碰撞，将自己一部分的能量传递给原子，使得原子被激发，那么电子剩下的能量就可能很小，以至于电子过栅极G后不足以克服反电势(不能到达A)，也就无法通过电流计；</li>
+                <li>若很多电子都在碰撞原子后都无法到达A，那么电流计中的电流就显著降低。</li>
+            </ol>
+            
+            <h4>实验现象：</h4>
+            <ol>
+                <li>实验过程中，KG间电压由0开始持续增加时，A极的电流起初上升，到达4.1V时，电流又陡然下降；</li>
+                <li>持续加压，电流又上升，当KG电压达到9V时，电流又陡然下降；</li>
+                <li>持续加压，电流继续上升，当KG电压达到13.9V时，电流又下降；</li>
+                <li>这种现象会继续发生，在18.8V、23.7V和28.6V处都会观察到类似的电流下降。</li>
+            </ol>
+            
+            <h4>实验结论：</h4>
+            <p>KG间电压在特定值时（4.1V、9V、13.9V、18.8V、23.7V、28.6V），电流会突然下降，原因是电子将能量传递给汞原子，使得汞原子从基态向相邻激发态跃迁，导致电子无法通过反向电场区。这些电压点之间的间隔约为4.9V，表明4.9eV为汞原子的第一激发电势，即电子在获得4.9eV的能量后将这部分能量传递给汞原子使其从基态激发到最近的第一激发态。</p>
+            
+            <p>这种周期性的电流下降正好对应于汞原子的第一激发电势的整数倍，有力地证明了原子能级的量子化特性。</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const voltageSlider = document.getElementById('voltage-slider');
+        const voltageValue = document.getElementById('voltage-value');
+        const currentValue = document.getElementById('current-value');
+        const resetButton = document.getElementById('reset-button');
+        const canvas = document.getElementById('voltage-graph');
+        const ctx = canvas.getContext('2d');
+        
+        // Setup canvas
+        function setupCanvas() {
+            // Set display size
+            canvas.style.width = '100%';
+            canvas.style.height = '400px';
+            
+            // Set actual size in memory (scaled to account for extra pixel density)
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            
+            // Scale context to ensure correct drawing operations
+            ctx.scale(dpr, dpr);
+            
+            // Set back to actual size in CSS pixels
+            canvas.style.width = `${rect.width}px`;
+            canvas.style.height = `${rect.height}px`;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw axes
+            drawAxes();
+        }
+        
+        // Variables for experiment simulation
+        let dataPoints = [];
+        const excitationVoltage = 4.9; // Interval between excitation potentials
+        const firstExcitationPoint = 4.1; // First excitation point of mercury in eV
+        let currentVoltage = 0;
+        
+        // Constants for graph drawing
+        const marginLeft = 60;
+        const marginRight = 20;
+        const marginTop = 20;
+        const marginBottom = 40;
+        
+        // Animate electrons
+        function animateElectrons() {
+            const electrons = [
+                document.getElementById('electron1'),
+                document.getElementById('electron2'),
+                document.getElementById('electron3'),
+                document.getElementById('electron4'),
+                document.getElementById('electron5')
+            ];
+            
+            const maxVoltage = 30;
+            const slider = document.getElementById('voltage-slider');
+            
+            // Generate all excitation points
+            const excitationPoints = [];
+            let point = firstExcitationPoint;
+            while (point <= 30) {
+                excitationPoints.push(point);
+                point += excitationVoltage;
+            }
+            
+            // Update electron visualization based on voltage
+            setInterval(() => {
+                const voltage = parseFloat(slider.value);
+                const current = calculateCurrent(voltage);
+                const normalizedCurrent = current / 12; // Scale for animation
+                
+                electrons.forEach((electron, index) => {
+                    // Different speeds for each electron
+                    const speed = 0.3 + index * 0.15;
+                    const baseX = parseFloat(electron.getAttribute('cx'));
+                    
+                    // Determine if electron should be visible based on position and current
+                    let opacity = 1;
+                    
+                    // If in acceleration region (before G)
+                    if (baseX < 160) {
+                        opacity = 1;
+                    } 
+                    // If near excitation voltage point, possibly scatter
+                    else if (baseX < 220) {
+                        for (let i = 0; i < excitationPoints.length; i++) {
+                            const excitationPoint = excitationPoints[i];
+                            if (Math.abs(voltage - excitationPoint) < 0.5) {
+                                opacity = Math.random() > 0.7 ? 1 : 0;
+                            }
+                        }
+                    }
+                    // If in deceleration region (after G), depend on current
+                    else {
+                        if (baseX > 250) {
+                            opacity = normalizedCurrent > Math.random() ? 1 : 0;
+                        }
+                    }
+                    
+                    // Animate with small random movement
+                    const baseY = 125; // Center Y position
+                    const newX = baseX + Math.sin(Date.now() * 0.001 * speed) * 5;
+                    const newY = baseY + Math.sin(Date.now() * 0.002 * speed) * 3;
+                    
+                    electron.setAttribute('cx', newX);
+                    electron.setAttribute('cy', newY);
+                    electron.setAttribute('opacity', opacity);
+                }, 30);
+            });
+        }
+        
+        // Calculate current based on voltage
+        function calculateCurrent(voltage) {
+            // Parameters for the Franck-Hertz curve
+            const retardingVoltage = 0.5; // 0.5V retarding voltage between G and A
+            const peakWidth = 1.5;        // Width of the peaks
+            const dropWidth = 0.8;        // Width of the drops
+            
+            // Base current function: increases with voltage but levels off
+            let current = 2 * Math.atan(voltage * 0.4) + 0.05 * voltage;
+            
+            // Generate all excitation points: starting at 4.1V and then adding 4.9V for each subsequent point
+            const excitationPoints = [];
+            let point = firstExcitationPoint;
+            
+            while (point <= 30) { // Only consider points within our voltage range
+                excitationPoints.push(point);
+                point += excitationVoltage;
+            }
+            
+            // Apply the characteristic peaks and drops at all excitation points
+            for (let i = 0; i < excitationPoints.length; i++) {
+                const excitationPoint = excitationPoints[i];
+                const distanceFromExcitation = Math.abs(voltage - excitationPoint);
+                
+                // Create a peak before the drop
+                if (distanceFromExcitation < peakWidth && voltage < excitationPoint) {
+                    const peakFactor = Math.exp(-Math.pow(distanceFromExcitation / (peakWidth * 0.4), 2));
+                    current += 1.2 * peakFactor * Math.min(1, voltage / 6);
+                }
+                
+                // Create a sharp drop after the peak
+                if (distanceFromExcitation < dropWidth && voltage > excitationPoint) {
+                    const dropFactor = Math.exp(-Math.pow(distanceFromExcitation / (dropWidth * 0.25), 2));
+                    current -= 3 * dropFactor * Math.min(1, voltage / 8);
+                }
+            }
+            
+            // Apply a general scaling factor to match typical curves
+            current = Math.max(current, 0.1) * 0.8;
+            
+            // Simulate the effect of the retarding voltage - no current until voltage > retarding voltage
+            if (voltage < retardingVoltage) {
+                current *= voltage / retardingVoltage * 0.3;
+            }
+            
+            return Math.max(current, 0.05);
+        }
+        
+        // Draw axes for the graph
+        function drawAxes() {
+            const rect = canvas.getBoundingClientRect();
+            const width = rect.width;
+            const height = rect.height;
+            
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1;
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#000';
+            
+            // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(marginLeft, marginTop);
+            ctx.lineTo(marginLeft, height - marginBottom);
+            ctx.stroke();
+            
+            // X-axis
+            ctx.beginPath();
+            ctx.moveTo(marginLeft, height - marginBottom);
+            ctx.lineTo(width - marginRight, height - marginBottom);
+            ctx.stroke();
+            
+            // X-axis labels
+            for (let v = 0; v <= 30; v += 5) {
+                const x = marginLeft + (v / 30) * (width - marginLeft - marginRight);
+                ctx.beginPath();
+                ctx.moveTo(x, height - marginBottom);
+                ctx.lineTo(x, height - marginBottom + 5);
+                ctx.stroke();
+                ctx.textAlign = 'center';
+                ctx.fillText(v.toString(), x, height - marginBottom + 20);
+            }
+            
+            // Y-axis labels
+            const maxCurrent = 15; // Maximum current value in μA
+            for (let i = 0; i <= maxCurrent; i += 3) {
+                const y = height - marginBottom - (i / maxCurrent) * (height - marginTop - marginBottom);
+                ctx.beginPath();
+                ctx.moveTo(marginLeft, y);
+                ctx.lineTo(marginLeft - 5, y);
+                ctx.stroke();
+                ctx.textAlign = 'right';
+                ctx.fillText(i.toString(), marginLeft - 10, y + 4);
+            }
+            
+            // Axis titles
+            ctx.textAlign = 'center';
+            ctx.fillText('加速电压 (V)', width / 2, height - 5);
+            
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.textAlign = 'center';
+            ctx.fillText('电流 (μA)', 0, 0);
+            ctx.restore();
+            
+            // Generate all excitation points: starting at 4.1V and then adding 4.9V for each subsequent point
+            const excitationPoints = [];
+            let point = firstExcitationPoint;
+            
+            while (point <= 30) { // Only consider points within our voltage range
+                excitationPoints.push(point);
+                point += excitationVoltage;
+            }
+            
+            // Draw excitation voltage markers for all points
+            for (let i = 0; i < excitationPoints.length; i++) {
+                const excitationPoint = excitationPoints[i];
+                const x = marginLeft + (excitationPoint / 30) * (width - marginLeft - marginRight);
+                
+                // Vertical line
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(255, 0, 0, 0.3)';
+                ctx.setLineDash([2, 2]);
+                ctx.moveTo(x, marginTop);
+                ctx.lineTo(x, height - marginBottom);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Label
+                ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
+                ctx.fillText(`${excitationPoint.toFixed(1)}V`, x, marginTop - 5);
+                ctx.fillStyle = '#000';
+            }
+        }
+        
+        // Plot data point
+        function plotPoint(voltage, current) {
+            const rect = canvas.getBoundingClientRect();
+            const width = rect.width;
+            const height = rect.height;
+            
+            const maxVoltage = 30;
+            const maxCurrent = 15;
+            
+            const x = marginLeft + (voltage / maxVoltage) * (width - marginLeft - marginRight);
+            const y = height - marginBottom - (current / maxCurrent) * (height - marginTop - marginBottom);
+            
+            // Store data point
+            dataPoints.push({ x, y, voltage, current });
+            
+            // Draw all points and connect them
+            ctx.beginPath();
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 2;
+            
+            if (dataPoints.length > 0) {
+                ctx.moveTo(dataPoints[0].x, dataPoints[0].y);
+                for (let i = 1; i < dataPoints.length; i++) {
+                    ctx.lineTo(dataPoints[i].x, dataPoints[i].y);
+                }
+            }
+            
+            ctx.stroke();
+            
+            // Draw the most recent point as a circle
+            ctx.beginPath();
+            ctx.fillStyle = '#2980b9';
+            ctx.arc(x, y, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Update the simulation based on current voltage
+        function updateSimulation() {
+            const voltage = parseFloat(voltageSlider.value);
+            currentVoltage = voltage;
+            
+            // Update displayed values
+            voltageValue.textContent = voltage.toFixed(1);
+            
+            const current = calculateCurrent(voltage);
+            currentValue.textContent = current.toFixed(2) + ' μA';
+            
+            // Clear canvas and redraw
+            setupCanvas();
+            
+            // Add new data point
+            plotPoint(voltage, current);
+        }
+        
+        // Initialize the simulation
+        function initSimulation() {
+            setupCanvas();
+            animateElectrons();
+            
+            // Event listeners
+            voltageSlider.addEventListener('input', updateSimulation);
+            resetButton.addEventListener('click', () => {
+                dataPoints = [];
+                voltageSlider.value = 0;
+                updateSimulation();
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                setupCanvas();
+                
+                // Redraw all data points
+                for (const point of dataPoints) {
+                    plotPoint(point.voltage, point.current);
+                }
+            });
+            
+            // Initial update
+            updateSimulation();
+        }
+        
+        // Start simulation when page loads
+        window.addEventListener('load', initSimulation);
+    </script>
+    <footer style="margin-top: 40px; text-align: center; padding: 20px; background-color: #f5f5f5; color: #555; font-size: 14px; border-top: 1px solid #ddd;">
+        <div>同济大学原子物理课程智能教学平台</div>
+    </footer>
+</body>
+</html>
