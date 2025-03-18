@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>氢原子光谱虚拟实验</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --warning-color: #f39c12;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        h1, h2 {
+            color: var(--secondary-color);
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .experiment-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .control-panel, .results-panel {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        select, input, button {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .result-box {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+        
+        .error {
+            color: var(--error-color);
+            font-weight: bold;
+        }
+        
+        .success {
+            color: var(--success-color);
+        }
+        
+        .warning {
+            color: var(--warning-color);
+        }
+        
+        .spectrum-container {
+            width: 100%;
+            margin-top: 30px;
+            padding: 20px 0;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            height: 150px;
+        }
+        
+        .spectrum-line {
+            position: absolute;
+            width: 4px;
+            height: 100%;
+            top: 0;
+            transform: translateX(-50%);
+        }
+        
+        .wavelength-scale {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .wavelength-marker {
+            position: absolute;
+            bottom: 0;
+            font-size: 10px;
+            color: white;
+            transform: translateX(-50%);
+        }
+        
+        .formula-box {
+            background-color: #f0f8ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 15px;
+            margin: 15px 0;
+        }
+        
+        .formula {
+            font-family: 'Cambria Math', serif;
+            text-align: center;
+            font-size: 18px;
+        }
+        
+        .spectral-series {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        .spectral-series th, .spectral-series td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .spectral-series th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .spectral-series tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        @media (max-width: 768px) {
+            .experiment-layout {
+                flex-direction: column;
+            }
+        }
+
+        .color-box {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            vertical-align: middle;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>氢原子光谱虚拟实验</h1>
+        
+        <div class="formula-box">
+            <p>波尔氢原子模型的能级跃迁波长公式：</p>
+            <p class="formula">1/λ = R·(1/n₁² - 1/n₂²)</p>
+            <p>其中，R 是里德伯常数（1.097 × 10⁷ m⁻¹），n₁ 是终态能级，n₂ 是初态能级（n₂ > n₁）。</p>
+        </div>
+        
+        <div class="experiment-layout">
+            <div class="control-panel">
+                <h2>实验控制台</h2>
+                
+                <div class="form-group">
+                    <label for="n1">选择终态能级 (n₁):</label>
+                    <select id="n1">
+                        <option value="1">n₁ = 1 (莱曼系)</option>
+                        <option value="2" selected>n₁ = 2 (巴尔末系)</option>
+                        <option value="3">n₁ = 3 (帕邢系)</option>
+                        <option value="4">n₁ = 4 (布拉克特系)</option>
+                        <option value="5">n₁ = 5 (普丰德系)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="n2">选择初态能级 (n₂):</label>
+                    <select id="n2">
+                        <option value="2">n₂ = 2</option>
+                        <option value="3" selected>n₂ = 3</option>
+                        <option value="4">n₂ = 4</option>
+                        <option value="5">n₂ = 5</option>
+                        <option value="6">n₂ = 6</option>
+                        <option value="7">n₂ = 7</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userWavelength">输入您计算的波长 (nm):</label>
+                    <input type="number" id="userWavelength" placeholder="例如: 656.3">
+                </div>
+                
+                <div class="form-group">
+                    <button id="calculate">计算与验证</button>
+                </div>
+            </div>
+            
+            <div class="results-panel">
+                <h2>实验结果</h2>
+                
+                <div class="result-box" id="resultBox">
+                    <p>请选择能级并计算波长。</p>
+                </div>
+                
+                <div id="errorDisplay" class="error"></div>
+            </div>
+        </div>
+        
+        <h2>氢原子光谱</h2>
+        <div class="spectrum-container" id="spectrumDisplay">
+            <!-- 光谱线由 JavaScript 动态生成 -->
+        </div>
+        <div class="wavelength-scale">
+            <span>380 nm</span>
+            <span>480 nm</span>
+            <span>580 nm</span>
+            <span>680 nm</span>
+            <span>780 nm</span>
+        </div>
+        
+        <h2>常见氢原子光谱系列</h2>
+        <table class="spectral-series">
+            <tr>
+                <th>系列名称</th>
+                <th>终态能级 (n₁)</th>
+                <th>波长范围</th>
+                <th>光谱区域</th>
+            </tr>
+            <tr>
+                <td>莱曼系 (Lyman)</td>
+                <td>1</td>
+                <td>91.2 - 121.6 nm</td>
+                <td>紫外区</td>
+            </tr>
+            <tr>
+                <td>巴尔末系 (Balmer)</td>
+                <td>2</td>
+                <td>364.6 - 656.3 nm</td>
+                <td>可见光区</td>
+            </tr>
+            <tr>
+                <td>帕邢系 (Paschen)</td>
+                <td>3</td>
+                <td>820.4 - 1875.1 nm</td>
+                <td>红外区</td>
+            </tr>
+            <tr>
+                <td>布拉克特系 (Brackett)</td>
+                <td>4</td>
+                <td>1458.0 - 4051.0 nm</td>
+                <td>红外区</td>
+            </tr>
+            <tr>
+                <td>普丰德系 (Pfund)</td>
+                <td>5</td>
+                <td>2279.0 - 7459.0 nm</td>
+                <td>红外区</td>
+            </tr>
+        </table>
+        
+        <footer style="margin-top: 30px; padding: 15px; text-align: center; border-top: 1px solid #eee; color: #666;">
+            <p>同济大学原子物理课程智能教学平台</p>
+        </footer>
+    </div>
+
+    <script>
+        // 里德伯常数 (m^-1)
+        const RYDBERG = 1.097e7;
+        
+        // 光谱线的颜色映射 (波长范围对应的颜色)
+        const wavelengthToColor = (wavelength) => {
+            // 波长单位: nm
+            if (wavelength < 380) return 'rgba(100, 0, 200, 0.8)'; // 紫外
+            if (wavelength < 420) return 'rgba(130, 0, 255, 0.8)'; // 紫色
+            if (wavelength < 440) return 'rgba(75, 0, 230, 0.8)';  // 蓝紫色
+            if (wavelength < 490) return 'rgba(0, 0, 255, 0.8)';   // 蓝色
+            if (wavelength < 510) return 'rgba(0, 200, 200, 0.8)'; // 蓝绿色
+            if (wavelength < 580) return 'rgba(0, 255, 0, 0.8)';   // 绿色
+            if (wavelength < 645) return 'rgba(255, 255, 0, 0.8)'; // 黄色
+            if (wavelength < 700) return 'rgba(255, 0, 0, 0.8)';   // 红色
+            return 'rgba(200, 0, 0, 0.8)';                        // 红外
+        };
+        
+        // 预设的一些常见谱线
+        const presetLines = [
+            { n1: 2, n2: 3, wavelength: 656.3, name: 'H-α (红)' },
+            { n1: 2, n2: 4, wavelength: 486.1, name: 'H-β (蓝绿)' },
+            { n1: 2, n2: 5, wavelength: 434.0, name: 'H-γ (蓝紫)' },
+            { n1: 2, n2: 6, wavelength: 410.2, name: 'H-δ (紫)' }
+        ];
+        
+        // 计算波长 (nm)
+        function calculateWavelength(n1, n2) {
+            if (n1 >= n2) {
+                throw new Error('初态能级(n₂)必须大于终态能级(n₁)');
+            }
+            
+            const wavelengthInMeters = 1 / (RYDBERG * (1 / (n1 * n1) - 1 / (n2 * n2)));
+            // 转换为纳米
+            return wavelengthInMeters * 1e9;
+        }
+        
+        // 计算误差百分比
+        function calculateError(theoretical, actual) {
+            return Math.abs((theoretical - actual) / actual * 100);
+        }
+        
+        // 初始化光谱显示
+        function initSpectrum() {
+            const spectrumDisplay = document.getElementById('spectrumDisplay');
+            spectrumDisplay.innerHTML = '';
+            
+            // 添加刻度标记
+            for (let wavelength = 400; wavelength <= 700; wavelength += 50) {
+                // 将波长映射到容器宽度
+                const position = mapWavelengthToPosition(wavelength);
+                
+                const marker = document.createElement('div');
+                marker.className = 'wavelength-marker';
+                marker.style.left = `${position}%`;
+                marker.textContent = `${wavelength}`;
+                spectrumDisplay.appendChild(marker);
+            }
+            
+            // 添加预设谱线
+            presetLines.forEach(line => {
+                if (line.wavelength >= 380 && line.wavelength <= 780) {
+                    addSpectrumLine(line.wavelength, line.name, 0.5);
+                }
+            });
+        }
+        
+        // 将波长映射到显示位置 (百分比)
+        function mapWavelengthToPosition(wavelength) {
+            // 光谱范围 380nm - 780nm
+            const min = 380;
+            const max = 780;
+            
+            // 边界检查
+            if (wavelength < min) return 0;
+            if (wavelength > max) return 100;
+            
+            // 映射到 0-100%
+            return ((wavelength - min) / (max - min)) * 100;
+        }
+        
+        // 添加光谱线
+        function addSpectrumLine(wavelength, label, opacity = 1) {
+            if (wavelength < 380 || wavelength > 780) {
+                // 超出可见光范围，不显示
+                return;
+            }
+            
+            const spectrumDisplay = document.getElementById('spectrumDisplay');
+            const position = mapWavelengthToPosition(wavelength);
+            
+            const line = document.createElement('div');
+            line.className = 'spectrum-line';
+            line.style.left = `${position}%`;
+            line.style.backgroundColor = wavelengthToColor(wavelength);
+            line.style.opacity = opacity;
+            
+            // 添加标签
+            const lineLabel = document.createElement('div');
+            lineLabel.textContent = label;
+            lineLabel.style.position = 'absolute';
+            lineLabel.style.top = '5px';
+            lineLabel.style.transform = 'translateX(-50%)';
+            lineLabel.style.fontSize = '12px';
+            lineLabel.style.color = 'white';
+            
+            line.appendChild(lineLabel);
+            spectrumDisplay.appendChild(line);
+        }
+        
+        // 显示结果
+        function displayResults(n1, n2, userWavelength) {
+            const resultBox = document.getElementById('resultBox');
+            const errorDisplay = document.getElementById('errorDisplay');
+            errorDisplay.textContent = '';
+            
+            try {
+                const actualWavelength = calculateWavelength(n1, n2);
+                const error = calculateError(userWavelength, actualWavelength);
+                
+                let resultClass = 'success';
+                let resultMessage = '';
+                
+                if (error < 1) {
+                    resultMessage = `<strong>优秀！</strong> 您的计算非常精确。`;
+                } else if (error < 5) {
+                    resultClass = 'warning';
+                    resultMessage = `<strong>不错！</strong> 您的计算接近正确值。`;
+                } else {
+                    resultClass = 'error';
+                    resultMessage = `<strong>需要改进。</strong> 您的计算误差较大。`;
+                }
+                
+                // 找到光谱系列名称
+                let seriesName = '';
+                switch(parseInt(n1)) {
+                    case 1: seriesName = '莱曼系 (Lyman)'; break;
+                    case 2: seriesName = '巴尔末系 (Balmer)'; break;
+                    case 3: seriesName = '帕邢系 (Paschen)'; break;
+                    case 4: seriesName = '布拉克特系 (Brackett)'; break;
+                    case 5: seriesName = '普丰德系 (Pfund)'; break;
+                    default: seriesName = '高能级系';
+                }
+                
+                // 找到可能的谱线名称
+                let lineName = '';
+                if (n1 === 2) {
+                    switch(parseInt(n2)) {
+                        case 3: lineName = 'H-α (红)'; break;
+                        case 4: lineName = 'H-β (蓝绿)'; break;
+                        case 5: lineName = 'H-γ (蓝紫)'; break;
+                        case 6: lineName = 'H-δ (紫)'; break;
+                        default: lineName = `H-${n2-n1}`;
+                    }
+                }
+                
+                // 检查是否在可见光范围内
+                let visibilityInfo = '';
+                if (actualWavelength < 380 || actualWavelength > 780) {
+                    visibilityInfo = `<p><em>注意：这个波长在可见光范围 (380-780 nm) 之外，人眼无法直接观察到。</em></p>`;
+                }
+                
+                const colorBox = `<div class="color-box" style="background-color: ${wavelengthToColor(actualWavelength)}"></div>`;
+                
+                resultBox.innerHTML = `
+                    <p>能级跃迁: n₂ = ${n2} → n₁ = ${n1} (${seriesName}${lineName ? ', ' + lineName : ''})</p>
+                    <p>您计算的波长: <strong>${userWavelength} nm</strong></p>
+                    <p>实际波长: <strong>${actualWavelength.toFixed(2)} nm</strong> ${colorBox}</p>
+                    <p>误差: <strong>${error.toFixed(2)}%</strong></p>
+                    <p class="${resultClass}">${resultMessage}</p>
+                    ${visibilityInfo}
+                `;
+                
+                // 添加用户的光谱线
+                initSpectrum(); // 重置光谱
+                addSpectrumLine(actualWavelength, `n₂=${n2}→n₁=${n1}`, 1);
+                
+            } catch (error) {
+                errorDisplay.textContent = error.message;
+                resultBox.innerHTML = '<p>请检查输入并重试。</p>';
+            }
+        }
+        
+        // 初始化页面
+        window.onload = function() {
+            const n1Select = document.getElementById('n1');
+            const n2Select = document.getElementById('n2');
+            const userWavelengthInput = document.getElementById('userWavelength');
+            const calculateButton = document.getElementById('calculate');
+            
+            // 初始化光谱显示
+            initSpectrum();
+            
+            // 验证并确保 n2 > n1
+            function validateLevels() {
+                const n1 = parseInt(n1Select.value);
+                const n2 = parseInt(n2Select.value);
+                
+                // 移除所有太小的 n2 选项
+                for (let i = 0; i < n2Select.options.length; i++) {
+                    const optionValue = parseInt(n2Select.options[i].value);
+                    if (optionValue <= n1) {
+                        n2Select.options[i].disabled = true;
+                    } else {
+                        n2Select.options[i].disabled = false;
+                    }
+                }
+                
+                // 如果当前选中的 n2 <= n1，自动选择下一个有效值
+                if (n2 <= n1) {
+                    for (let i = 0; i < n2Select.options.length; i++) {
+                        const optionValue = parseInt(n2Select.options[i].value);
+                        if (optionValue > n1) {
+                            n2Select.value = optionValue;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // 下拉菜单变化时验证
+            n1Select.addEventListener('change', validateLevels);
+            
+            // 计算按钮点击事件
+            calculateButton.addEventListener('click', function() {
+                const n1 = parseInt(n1Select.value);
+                const n2 = parseInt(n2Select.value);
+                const userWavelength = parseFloat(userWavelengthInput.value);
+                
+                if (isNaN(userWavelength)) {
+                    document.getElementById('errorDisplay').textContent = '请输入有效的波长数值';
+                    return;
+                }
+                
+                if (userWavelength <= 0) {
+                    document.getElementById('errorDisplay').textContent = '波长必须为正数';
+                    return;
+                }
+                
+                displayResults(n1, n2, userWavelength);
+            });
+            
+            // 初始验证
+            validateLevels();
+        };
+    </script>
+</body>
+</html>
