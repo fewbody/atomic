@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>玻尔模型交互式可视化</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .canvas-container {
+            position: relative;
+            margin: 20px auto;
+            width: 500px;
+            height: 500px;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #111;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .info-panel {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .transition-info {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e8f4f8;
+            border-radius: 4px;
+            display: none;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 10px 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>玻尔模型交互式可视化</h1>
+        
+        <div class="canvas-container">
+            <canvas id="bohrCanvas" width="500" height="500"></canvas>
+        </div>
+        
+        <div class="controls">
+            <div>
+                <label for="currentLevel">当前能级: </label>
+                <select id="currentLevel">
+                    <option value="1">n = 1</option>
+                    <option value="2">n = 2</option>
+                    <option value="3">n = 3</option>
+                    <option value="4">n = 4</option>
+                    <option value="5">n = 5</option>
+                </select>
+            </div>
+            
+            <div>
+                <label for="targetLevel">目标能级: </label>
+                <select id="targetLevel">
+                    <option value="1">n = 1</option>
+                    <option value="2" selected>n = 2</option>
+                    <option value="3">n = 3</option>
+                    <option value="4">n = 4</option>
+                    <option value="5">n = 5</option>
+                </select>
+            </div>
+            
+            <button id="transitionBtn">电子跃迁</button>
+            <button id="resetBtn">重置</button>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #3498db;"></div>
+                <span>电子</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #e74c3c;"></div>
+                <span>光子释放到外界（跃迁至低能级）</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #2ecc71;"></div>
+                <span>从外界吸收光子（跃迁至高能级）</span>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h3>能量信息</h3>
+            <p>玻尔模型中，电子的能量（eV）: E<sub>n</sub> = -13.6 / n<sup>2</sup></p>
+            <p>当前能级: <span id="currentLevelInfo">n = 1, E = -13.60 eV</span></p>
+            
+            <div id="transitionInfo" class="transition-info">
+                <p>跃迁信息:</p>
+                <p id="transitionDetails"></p>
+                <p id="photonEnergy"></p>
+            </div>
+        </div>
+    </div>
+    
+    <footer style="text-align: center; margin-top: 30px; padding: 15px; background-color: #2c3e50; color: white; border-radius: 4px;">
+        同济大学原子物理课程智能教学平台
+    </footer>
+
+    <script>
+        // 获取DOM元素
+        const canvas = document.getElementById('bohrCanvas');
+        const ctx = canvas.getContext('2d');
+        const currentLevelSelect = document.getElementById('currentLevel');
+        const targetLevelSelect = document.getElementById('targetLevel');
+        const transitionBtn = document.getElementById('transitionBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const currentLevelInfo = document.getElementById('currentLevelInfo');
+        const transitionInfo = document.getElementById('transitionInfo');
+        const transitionDetails = document.getElementById('transitionDetails');
+        const photonEnergy = document.getElementById('photonEnergy');
+
+        // 常量定义
+        const CENTER_X = canvas.width / 2;
+        const CENTER_Y = canvas.height / 2;
+        const BASE_RADIUS = 40; // 第一轨道的基础半径
+        const RADIUS_FACTOR = 30; // 轨道半径增长因子
+        const NUCLEUS_RADIUS = 15;
+        const ELECTRON_RADIUS = 8;
+        const MAX_LEVEL = 5;
+
+        // 电子对象
+        const electron = {
+            level: 1,
+            targetLevel: 1,
+            angle: 0,
+            transitioning: false,
+            transitionProgress: 0,
+            transitionSpeed: 0.02, // 跃迁速度
+            orbitSpeed: 0.02, // 轨道运行速度
+        };
+
+        // 光子对象
+        const photon = {
+            active: false,
+            startX: 0,
+            startY: 0,
+            endX: 0,
+            endY: 0,
+            progress: 0,
+            speed: 0.05,
+            direction: 1, // 1: 向外（吸收）, -1: 向内（释放）
+        };
+
+        // 初始化
+        function init() {
+            electron.level = parseInt(currentLevelSelect.value);
+            electron.targetLevel = electron.level;
+            electron.angle = 0;
+            electron.transitioning = false;
+            electron.transitionProgress = 0;
+            
+            photon.active = false;
+            
+            updateEnergyInfo();
+            transitionInfo.style.display = 'none';
+            
+            // 开始动画循环
+            if (!animationFrameId) {
+                animationFrameId = requestAnimationFrame(animate);
+            }
+        }
+
+        // 计算轨道半径
+        function getOrbitRadius(level) {
+            return BASE_RADIUS + (level - 1) * RADIUS_FACTOR;
+        }
+
+        // 计算能量
+        function calculateEnergy(level) {
+            return -13.6 / (level * level);
+        }
+
+        // 更新能量信息显示
+        function updateEnergyInfo() {
+            const energy = calculateEnergy(electron.level);
+            currentLevelInfo.textContent = `n = ${electron.level}, E = ${energy.toFixed(2)} eV`;
+        }
+
+        // 显示跃迁信息
+        function showTransitionInfo(fromLevel, toLevel) {
+            const fromEnergy = calculateEnergy(fromLevel);
+            const toEnergy = calculateEnergy(toLevel);
+            const energyDiff = Math.abs(toEnergy - fromEnergy);
+            
+            transitionDetails.textContent = `从 n = ${fromLevel} (${fromEnergy.toFixed(2)} eV) 到 n = ${toLevel} (${toEnergy.toFixed(2)} eV)`;
+            
+            if (fromLevel < toLevel) {
+                photonEnergy.textContent = `吸收光子能量: ${energyDiff.toFixed(2)} eV`;
+            } else {
+                photonEnergy.textContent = `释放光子能量: ${energyDiff.toFixed(2)} eV`;
+            }
+            
+            transitionInfo.style.display = 'block';
+        }
+
+        // 启动跃迁
+        function startTransition() {
+            const targetLevel = parseInt(targetLevelSelect.value);
+            
+            if (targetLevel !== electron.level && !electron.transitioning) {
+                electron.targetLevel = targetLevel;
+                electron.transitioning = true;
+                electron.transitionProgress = 0;
+                
+                // 设置光子方向（吸收或释放）
+                photon.direction = (targetLevel > electron.level) ? 1 : -1;
+                photon.active = true;
+                photon.progress = 0;
+                
+                // 显示跃迁信息
+                showTransitionInfo(electron.level, targetLevel);
+            }
+        }
+
+        // 绘制原子核
+        function drawNucleus() {
+            ctx.beginPath();
+            ctx.arc(CENTER_X, CENTER_Y, NUCLEUS_RADIUS, 0, Math.PI * 2);
+            ctx.fillStyle = '#e74c3c';
+            ctx.fill();
+            
+            // 添加质子中子效果
+            for (let i = 0; i < 5; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * (NUCLEUS_RADIUS - 3);
+                
+                ctx.beginPath();
+                ctx.arc(
+                    CENTER_X + Math.cos(angle) * distance,
+                    CENTER_Y + Math.sin(angle) * distance,
+                    2,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fillStyle = i % 2 === 0 ? '#c0392b' : '#ecf0f1';
+                ctx.fill();
+            }
+        }
+
+        // 绘制轨道
+        function drawOrbits() {
+            for (let i = 1; i <= MAX_LEVEL; i++) {
+                const radius = getOrbitRadius(i);
+                ctx.beginPath();
+                ctx.arc(CENTER_X, CENTER_Y, radius, 0, Math.PI * 2);
+                
+                // 当前或目标轨道用亮色标记
+                if (i === electron.level || i === electron.targetLevel) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.lineWidth = 2;
+                } else {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.lineWidth = 1;
+                }
+                
+                ctx.stroke();
+                
+                // 添加轨道标签
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.font = '12px Arial';
+                ctx.fillText(`n = ${i}`, CENTER_X + radius + 5, CENTER_Y);
+            }
+        }
+
+        // 绘制电子
+        function drawElectron() {
+            let radius;
+            
+            if (electron.transitioning) {
+                const startRadius = getOrbitRadius(electron.level);
+                const endRadius = getOrbitRadius(electron.targetLevel);
+                radius = startRadius + (endRadius - startRadius) * electron.transitionProgress;
+            } else {
+                radius = getOrbitRadius(electron.level);
+            }
+            
+            const x = CENTER_X + Math.cos(electron.angle) * radius;
+            const y = CENTER_Y + Math.sin(electron.angle) * radius;
+            
+            // 绘制电子
+            ctx.beginPath();
+            ctx.arc(x, y, ELECTRON_RADIUS, 0, Math.PI * 2);
+            ctx.fillStyle = '#3498db';
+            ctx.fill();
+            
+            // 添加发光效果
+            ctx.beginPath();
+            ctx.arc(x, y, ELECTRON_RADIUS + 2, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(52, 152, 219, 0.5)';
+            ctx.stroke();
+            
+            // 保存电子位置用于光子起点
+            if (photon.active && photon.progress === 0) {
+                photon.startX = x;
+                photon.startY = y;
+                photon.endX = CENTER_X;
+                photon.endY = CENTER_Y;
+            }
+            
+            return { x, y };
+        }
+
+        // 绘制光子
+        function drawPhoton(electronPosition) {
+            if (!photon.active) return;
+            
+            // 计算画布边界点作为光子的外部起点/终点
+            const canvasEdgeAngle = Math.atan2(electronPosition.y - CENTER_Y, electronPosition.x - CENTER_X);
+            const edgeX = CENTER_X + Math.cos(canvasEdgeAngle) * (canvas.width / 1.5);
+            const edgeY = CENTER_Y + Math.sin(canvasEdgeAngle) * (canvas.height / 1.5);
+            
+            // 如果是吸收(direction > 0)，光子从外部到电子；如果是释放(direction < 0)，光子从电子到外部
+            const startX = photon.direction > 0 ? edgeX : electronPosition.x;
+            const startY = photon.direction > 0 ? edgeY : electronPosition.y;
+            const endX = photon.direction > 0 ? electronPosition.x : edgeX;
+            const endY = photon.direction > 0 ? electronPosition.y : edgeY;
+            
+            const progress = Math.min(photon.progress, 1);
+            const x = startX + (endX - startX) * progress;
+            const y = startY + (endY - startY) * progress;
+            
+            // 绘制光子
+            ctx.beginPath();
+            ctx.arc(x, y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = photon.direction > 0 ? '#2ecc71' : '#e74c3c';
+            ctx.fill();
+            
+            // 添加光线效果
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = photon.direction > 0 ? 'rgba(46, 204, 113, 0.5)' : 'rgba(231, 76, 60, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // 更新光子进度
+            photon.progress += photon.speed;
+            
+            // 光子完成移动后
+            if (photon.progress >= 1) {
+                photon.active = false;
+            }
+        }
+
+        // 更新电子状态
+        function updateElectron() {
+            // 更新电子轨道角度
+            electron.angle += electron.orbitSpeed * (1 / Math.sqrt(electron.level)); // 轨道周期与n相关
+            
+            // 跃迁动画
+            if (electron.transitioning) {
+                electron.transitionProgress += electron.transitionSpeed;
+                
+                // 跃迁完成
+                if (electron.transitionProgress >= 1) {
+                    electron.level = electron.targetLevel;
+                    electron.transitioning = false;
+                    electron.transitionProgress = 0;
+                    
+                    // 更新选择框和信息
+                    currentLevelSelect.value = electron.level;
+                    updateEnergyInfo();
+                }
+            }
+        }
+
+        // 清除画布
+        function clearCanvas() {
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // 动画循环
+        let animationFrameId;
+        function animate() {
+            clearCanvas();
+            drawOrbits();
+            drawNucleus();
+            const electronPosition = drawElectron();
+            drawPhoton(electronPosition);
+            updateElectron();
+            
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        // 事件监听
+        transitionBtn.addEventListener('click', startTransition);
+        resetBtn.addEventListener('click', init);
+        
+        currentLevelSelect.addEventListener('change', function() {
+            if (!electron.transitioning) {
+                electron.level = parseInt(this.value);
+                electron.targetLevel = electron.level;
+                updateEnergyInfo();
+                transitionInfo.style.display = 'none';
+            }
+        });
+
+        // 初始化应用
+        init();
+    </script>
+</body>
+</html>
