@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>量子力学的哥本哈根解释</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+        }
+        .container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        .visualization {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .quote {
+            font-style: italic;
+            margin: 20px;
+            padding: 10px 20px;
+            border-left: 3px solid #3498db;
+            background-color: #ebf5fb;
+        }
+        .comparison {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .comparison-item {
+            flex: 1;
+            min-width: 300px;
+            margin: 10px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 5px;
+        }
+        @media (max-width: 768px) {
+            .comparison-item {
+                flex: 100%;
+            }
+        }
+        .footnote {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>量子力学的哥本哈根解释</h1>
+        
+        <section id="introduction">
+            <h2>引言</h2>
+            <p>量子力学是20世纪物理学的伟大革命之一，而<strong>哥本哈根解释</strong>则是理解量子物理学奇特现象的首个主流框架。该解释由丹麦物理学家<strong>尼尔斯·玻尔</strong>和德国物理学家<strong>维尔纳·海森堡</strong>在20世纪20年代提出，至今仍然是物理教科书中最常见的量子力学诠释。</p>
+            
+            <div class="quote">
+                "如果量子力学没有使你感到震惊，那么你还没有理解它。" —— 尼尔斯·玻尔
+            </div>
+        </section>
+        
+        <section id="core-principles">
+            <h2>哥本哈根解释的核心原则</h2>
+            
+            <h3>1. 波粒二象性</h3>
+            <p>量子实体（如光子、电子）既表现出波的特性，也表现出粒子的特性，但在任一时刻，我们只能观察到其中一种特性，而非同时观察两种特性。</p>
+            
+            <div class="visualization">
+                <h4>双缝实验可视化</h4>
+                <svg width="600" height="320" viewBox="0 0 600 320">
+                    <!-- Background -->
+                    <rect width="600" height="320" fill="#ffffff"></rect>
+                    
+                    <!-- Source -->
+                    <circle cx="50" cy="160" r="15" fill="#ff6347"></circle>
+                    <text x="50" y="200" text-anchor="middle" font-size="14">光源</text>
+                    
+                    <!-- Barrier with 2 slits -->
+                    <rect x="200" y="80" width="10" height="160" fill="#444444"></rect>
+                    <rect x="200" y="130" width="10" height="20" fill="#ffffff"></rect>
+                    <rect x="200" y="170" width="10" height="20" fill="#ffffff"></rect>
+                    <text x="205" y="70" text-anchor="middle" font-size="14">双缝</text>
+                    
+                    <!-- Wave pattern -->
+                    <path d="M60,160 Q 120,160 180,160" stroke="#ff634766" stroke-width="2" fill="none"></path>
+                    
+                    <!-- Diffracted waves -->
+                    <path d="M210,140 Q 300,100 400,80 Q 450,70 500,150" stroke="#ff634744" stroke-width="1.5" fill="none"></path>
+                    <path d="M210,140 Q 250,150 300,160 Q 350,170 400,160 Q 450,150 500,120" stroke="#ff634744" stroke-width="1.5" fill="none"></path>
+                    <path d="M210,140 Q 280,180 350,200 Q 420,220 500,180" stroke="#ff634744" stroke-width="1.5" fill="none"></path>
+                    
+                    <path d="M210,180 Q 300,220 400,240 Q 450,250 500,170" stroke="#ff634744" stroke-width="1.5" fill="none"></path>
+                    <path d="M210,180 Q 250,170 300,160 Q 350,150 400,160 Q 450,170 500,200" stroke="#ff634744" stroke-width="1.5" fill="none"></path>
+                    <path d="M210,180 Q 280,140 350,120 Q 420,100 500,140" stroke="#ff634744" stroke-width="1.5" fill="none"></path>
+                    
+                    <!-- Detector screen -->
+                    <rect x="500" y="80" width="10" height="160" fill="#8a2be2"></rect>
+                    <text x="505" y="70" text-anchor="middle" font-size="14">屏幕</text>
+                    
+                    <!-- Interference pattern -->
+                    <rect x="510" y="90" width="5" height="10" fill="rgba(255,99,71,0.4)"></rect>
+                    <rect x="510" y="110" width="5" height="15" fill="rgba(255,99,71,0.8)"></rect>
+                    <rect x="510" y="135" width="5" height="10" fill="rgba(255,99,71,0.4)"></rect>
+                    <rect x="510" y="155" width="5" height="15" fill="rgba(255,99,71,0.9)"></rect>
+                    <rect x="510" y="180" width="5" height="10" fill="rgba(255,99,71,0.5)"></rect>
+                    <rect x="510" y="200" width="5" height="15" fill="rgba(255,99,71,0.8)"></rect>
+                    <rect x="510" y="225" width="5" height="10" fill="rgba(255,99,71,0.3)"></rect>
+                    
+                    <!-- Wave vs Particle view -->
+                    <text x="300" y="35" text-anchor="middle" font-size="16" font-weight="bold">波动特性：干涉图案</text>
+                </svg>
+                <svg width="600" height="220" viewBox="0 0 600 220">
+                    <!-- Background -->
+                    <rect width="600" height="220" fill="#ffffff"></rect>
+                    
+                    <!-- Source -->
+                    <circle cx="50" cy="110" r="15" fill="#ff6347"></circle>
+                    <text x="50" y="150" text-anchor="middle" font-size="14">光源</text>
+                    
+                    <!-- Barrier with 2 slits -->
+                    <rect x="200" y="60" width="10" height="100" fill="#444444"></rect>
+                    <rect x="200" y="90" width="10" height="10" fill="#ffffff"></rect>
+                    <rect x="200" y="120" width="10" height="10" fill="#ffffff"></rect>
+                    
+                    <!-- Particle paths -->
+                    <path d="M60,110 L 200,95" stroke="#ff6347" stroke-width="2" fill="none" stroke-dasharray="5,2"></path>
+                    <circle cx="205" cy="95" r="3" fill="#ff6347"></circle>
+                    <path d="M210,95 L 500,80" stroke="#ff6347" stroke-width="2" fill="none" stroke-dasharray="5,2"></path>
+                    
+                    <path d="M60,110 L 200,125" stroke="#4169e1" stroke-width="2" fill="none" stroke-dasharray="5,2"></path>
+                    <circle cx="205" cy="125" r="3" fill="#4169e1"></circle>
+                    <path d="M210,125 L 500,150" stroke="#4169e1" stroke-width="2" fill="none" stroke-dasharray="5,2"></path>
+                    
+                    <!-- Detector screen -->
+                    <rect x="500" y="60" width="10" height="100" fill="#8a2be2"></rect>
+                    
+                    <!-- Hit points -->
+                    <circle cx="505" cy="80" r="4" fill="#ff6347"></circle>
+                    <circle cx="505" cy="150" r="4" fill="#4169e1"></circle>
+                    
+                    <!-- Particle view -->
+                    <text x="300" y="35" text-anchor="middle" font-size="16" font-weight="bold">粒子特性：离散撞击点</text>
+                </svg>
+                <p>双缝实验展示了量子物质的波粒二象性。当光子或电子通过双缝时，如果我们观察它经过哪个缝隙，它表现为粒子；如果不观察，它则表现为波，产生干涉条纹。</p>
+            </div>
+            
+            <h3>2. 不确定性原理</h3>
+            <p>海森堡的不确定性原理指出，对于像电子这样的量子体系，其位置与动量不能同时被精确确定。这不仅仅是测量技术的限制，而是自然界的基本特性。</p>
+            
+            <div class="visualization">
+                <h4>不确定性原理</h4>
+                <svg width="600" height="480" viewBox="0 0 600 480">
+                    <!-- Background -->
+                    <rect width="600" height="480" fill="#ffffff"></rect>
+                    
+                    <!-- Title -->
+                    <text x="300" y="30" text-anchor="middle" font-size="20" font-weight="bold">海森堡不确定性原理</text>
+                    <text x="300" y="60" text-anchor="middle" font-size="18">Δx · Δp ≥ ħ/2</text>
+                    
+                    <!-- First case: Δp small, Δx large -->
+                    <g transform="translate(0, 90)">
+                        <text x="300" y="20" text-anchor="middle" font-size="18" font-weight="bold">情况一: Δp小, Δx大</text>
+                        
+                        <!-- Coordinate system -->
+                        <line x1="50" y1="120" x2="550" y2="120" stroke="#333" stroke-width="2"></line>
+                        <text x="550" y="140" font-size="14">x (位置)</text>
+                        
+                        <!-- Wide wavepacket -->
+                        <path d="M 50,120 
+                                Q 100,115 150,105 
+                                Q 200,95 300,90 
+                                Q 400,95 450,105
+                                Q 500,115 550,120" 
+                              fill="none" stroke="#3498db" stroke-width="3"></path>
+                              
+                        <!-- Fill under the curve -->
+                        <path d="M 50,120 
+                                Q 100,115 150,105 
+                                Q 200,95 300,90 
+                                Q 400,95 450,105
+                                Q 500,115 550,120
+                                L 550,120 L 50,120 Z" 
+                              fill="rgba(52,152,219,0.2)" stroke="none"></path>
+                        
+                        <!-- Delta x indication - WIDE -->
+                        <line x1="100" y1="105" x2="500" y2="105" stroke="#e74c3c" stroke-width="2"></line>
+                        <line x1="100" y1="100" x2="100" y2="110" stroke="#e74c3c" stroke-width="2"></line>
+                        <line x1="500" y1="100" x2="500" y2="110" stroke="#e74c3c" stroke-width="2"></line>
+                        <text x="300" y="85" text-anchor="middle" font-size="16" fill="#e74c3c">Δx 大</text>
+                        
+                        <!-- Labels for momentum -->
+                        <text x="300" y="165" text-anchor="middle" font-size="16" fill="#2980b9">确定的动量 (Δp小)</text>
+                        <text x="300" y="185" text-anchor="middle" font-size="14" font-style="italic">接近特定的波长</text>
+                    </g>
+                    
+                    <!-- Second case: Δp large, Δx small -->
+                    <g transform="translate(0, 300)">
+                        <text x="300" y="20" text-anchor="middle" font-size="18" font-weight="bold">情况二: Δp大, Δx小</text>
+                        
+                        <!-- Coordinate system -->
+                        <line x1="50" y1="120" x2="550" y2="120" stroke="#333" stroke-width="2"></line>
+                        <text x="550" y="140" font-size="14">x (位置)</text>
+                        
+                        <!-- Narrow wavepacket -->
+                        <path d="M 250,120 
+                                Q 270,115 285,100 
+                                Q 295,70 300,40 
+                                Q 305,70 315,100
+                                Q 330,115 350,120" 
+                              fill="none" stroke="#e74c3c" stroke-width="3"></path>
+                              
+                        <!-- Fill under the curve -->
+                        <path d="M 250,120 
+                                Q 270,115 285,100 
+                                Q 295,70 300,40 
+                                Q 305,70 315,100
+                                Q 330,115 350,120
+                                L 350,120 L 250,120 Z" 
+                              fill="rgba(231,76,60,0.2)" stroke="none"></path>
+                        
+                        <!-- Delta x indication - NARROW -->
+                        <line x1="285" y1="85" x2="315" y2="85" stroke="#3498db" stroke-width="2"></line>
+                        <line x1="285" y1="80" x2="285" y2="90" stroke="#3498db" stroke-width="2"></line>
+                        <line x1="315" y1="80" x2="315" y2="90" stroke="#3498db" stroke-width="2"></line>
+                        <text x="300" y="70" text-anchor="middle" font-size="16" fill="#3498db">Δx 小</text>
+                        
+                        <!-- Labels for momentum -->
+                        <text x="300" y="165" text-anchor="middle" font-size="16" fill="#c0392b">不确定的动量 (Δp大)</text>
+                        <text x="300" y="185" text-anchor="middle" font-size="14" font-style="italic">混合了多种不同波长</text>
+                    </g>
+                </svg>
+                <p>不确定性原理反映了量子波包的基本特性：</p>
+                <ul>
+                    <li><strong>情况一</strong>：当粒子的动量比较确定（Δp小）时，波包在位置空间上呈现出广泛分布的状态（Δx大）。这种波包接近于单一波长的正弦波。</li>
+                    <li><strong>情况二</strong>：当粒子的位置比较确定（Δx小）时，波包在位置空间上呈现出高度局域化的状态，这意味着动量非常不确定（Δp大）。这种波包是由多种不同波长的波叠加而成。</li>
+                </ul>
+                <p>不确定性原理表明：Δx·Δp ≥ ħ/2，这是量子力学的基本特性，源于波函数的波动性本质，而非测量技术的限制。</p>
+            </div>
+            
+            <h3>3. 波函数坍缩</h3>
+            <p>在测量之前，量子系统处于多种可能状态的叠加。一旦测量发生，波函数会突然"坍缩"到某一个确定的状态。这种坍缩不能用经典物理学解释，是量子力学的核心特性之一。</p>
+            
+            <div class="visualization">
+                <h4>波函数坍缩过程</h4>
+                <svg width="600" height="300" viewBox="0 0 600 300">
+                    <!-- Background -->
+                    <rect width="600" height="300" fill="#ffffff"></rect>
+                    
+                    <!-- Before measurement -->
+                    <g transform="translate(0,0)">
+                        <!-- Title -->
+                        <text x="150" y="30" text-anchor="middle" font-size="16" font-weight="bold">测量前：叠加态</text>
+                        
+                        <!-- Axis -->
+                        <line x1="50" y1="150" x2="250" y2="150" stroke="#333" stroke-width="1"></line>
+                        <line x1="50" y1="50" x2="50" y2="200" stroke="#333" stroke-width="1"></line>
+                        
+                        <!-- Wave function -->
+                        <path d="M 50,150 Q 75,100 100,80 Q 125,60 150,70 Q 175,80 200,120 Q 225,160 250,150" fill="none" stroke="#9b59b6" stroke-width="3"></path>
+                        
+                        <!-- Probability distribution -->
+                        <path d="M 50,150 Q 75,100 100,80 Q 125,60 150,70 Q 175,80 200,120 Q 225,160 250,150 L 250,150 L 50,150 Z" fill="rgba(155,89,182,0.2)" stroke="none"></path>
+                        
+                        <!-- Labels -->
+                        <text x="150" y="220" text-anchor="middle" font-size="12">多种可能性的叠加</text>
+                    </g>
+                    
+                    <!-- Arrow -->
+                    <path d="M 300,120 L 320,120 L 320,100 L 340,140 L 320,180 L 320,160 L 300,160 Z" fill="#e74c3c"></path>
+                    <text x="320" y="80" text-anchor="middle" font-size="14">测量</text>
+                    
+                    <!-- After measurement -->
+                    <g transform="translate(340,0)">
+                        <!-- Title -->
+                        <text x="150" y="30" text-anchor="middle" font-size="16" font-weight="bold">测量后：确定态</text>
+                        
+                        <!-- Axis -->
+                        <line x1="50" y1="150" x2="250" y2="150" stroke="#333" stroke-width="1"></line>
+                        <line x1="50" y1="50" x2="50" y2="200" stroke="#333" stroke-width="1"></line>
+                        
+                        <!-- Collapsed wave function -->
+                        <path d="M 50,150 L 130,150 Q 140,80 150,80 Q 160,80 170,150 L 250,150" fill="none" stroke="#3498db" stroke-width="3"></path>
+                        <circle cx="150" cy="80" r="5" fill="#e74c3c"></circle>
+                        
+                        <!-- Probability distribution -->
+                        <path d="M 50,150 L 130,150 Q 140,80 150,80 Q 160,80 170,150 L 250,150 L 250,150 L 50,150 Z" fill="rgba(52,152,219,0.2)" stroke="none"></path>
+                        
+                        <!-- Labels -->
+                        <text x="150" y="220" text-anchor="middle" font-size="12">坍缩到单一状态</text>
+                    </g>
+                </svg>
+                <p>波函数坍缩描述了量子系统从多种可能性的叠加态（由波函数描述）到单一确定态的突然转变。这种转变发生在测量的那一刻，且无法预测具体会坍缩到哪个状态。</p>
+            </div>
+            
+            <h3>4. 概率解释</h3>
+            <p>量子力学中，粒子的波函数平方的值表示在特定位置找到该粒子的概率。也就是说，量子力学不提供确定性的预测，而是概率性的预测。</p>
+            
+            <div class="visualization">
+                <h4>电子云模型</h4>
+                <svg width="400" height="400" viewBox="0 0 400 400">
+                    <!-- Background -->
+                    <rect width="400" height="400" fill="#ffffff"></rect>
+                    
+                    <!-- Nucleus -->
+                    <circle cx="200" cy="200" r="15" fill="#ff6347"></circle>
+                    <text x="200" y="240" text-anchor="middle" font-size="14">原子核</text>
+                    
+                    <!-- Electron probability clouds -->
+                    <circle cx="200" cy="200" r="60" fill="rgba(52,152,219,0.1)" stroke="#3498db" stroke-width="1"></circle>
+                    <circle cx="200" cy="200" r="80" fill="rgba(52,152,219,0.1)" stroke="#3498db" stroke-width="1"></circle>
+                    <circle cx="200" cy="200" r="100" fill="rgba(52,152,219,0.1)" stroke="#3498db" stroke-width="1"></circle>
+                    <circle cx="200" cy="200" r="120" fill="rgba(52,152,219,0.05)" stroke="#3498db" stroke-width="1"></circle>
+                    <circle cx="200" cy="200" r="140" fill="rgba(52,152,219,0.03)" stroke="#3498db" stroke-width="1"></circle>
+                    <circle cx="200" cy="200" r="160" fill="rgba(52,152,219,0.01)" stroke="#3498db" stroke-width="1"></circle>
+                    
+                    <!-- Electrons (as small dots to indicate probability) -->
+                    <g id="electrons">
+                        <!-- Many small dots with varying opacity to show probability distribution -->
+                        <circle cx="260" cy="200" r="2" fill="#3498db"></circle>
+                        <circle cx="240" cy="250" r="2" fill="#3498db" fill-opacity="0.8"></circle>
+                        <circle cx="200" cy="140" r="2" fill="#3498db" fill-opacity="0.9"></circle>
+                        <circle cx="150" cy="210" r="2" fill="#3498db" fill-opacity="0.7"></circle>
+                        <circle cx="190" cy="270" r="2" fill="#3498db" fill-opacity="0.6"></circle>
+                        <circle cx="230" cy="190" r="2" fill="#3498db" fill-opacity="0.8"></circle>
+                        <circle cx="160" cy="170" r="2" fill="#3498db" fill-opacity="0.7"></circle>
+                        <circle cx="210" cy="120" r="2" fill="#3498db" fill-opacity="0.5"></circle>
+                        <circle cx="280" cy="215" r="2" fill="#3498db" fill-opacity="0.4"></circle>
+                        <circle cx="190" cy="300" r="2" fill="#3498db" fill-opacity="0.3"></circle>
+                        <circle cx="130" cy="230" r="2" fill="#3498db" fill-opacity="0.5"></circle>
+                        <circle cx="240" cy="150" r="2" fill="#3498db" fill-opacity="0.6"></circle>
+                        <circle cx="320" cy="200" r="2" fill="#3498db" fill-opacity="0.2"></circle>
+                        <circle cx="200" cy="330" r="2" fill="#3498db" fill-opacity="0.2"></circle>
+                        <circle cx="110" cy="200" r="2" fill="#3498db" fill-opacity="0.3"></circle>
+                        <circle cx="200" cy="90" r="2" fill="#3498db" fill-opacity="0.3"></circle>
+                        <circle cx="290" cy="150" r="2" fill="#3498db" fill-opacity="0.3"></circle>
+                        <circle cx="150" cy="270" r="2" fill="#3498db" fill-opacity="0.4"></circle>
+                        <circle cx="220" cy="220" r="2" fill="#3498db" fill-opacity="0.8"></circle>
+                        <circle cx="170" cy="180" r="2" fill="#3498db" fill-opacity="0.7"></circle>
+                    </g>
+                    
+                    <!-- Labels -->
+                    <text x="330" y="50" text-anchor="middle" font-size="14">电子云</text>
+                    <text x="330" y="70" text-anchor="middle" font-size="12">(概率分布)</text>
+                    <path d="M 330,80 L 290,120" stroke="#666" stroke-width="1" fill="none"></path>
+                </svg>
+                <p>原子中的电子不再是按照固定轨道运动的粒子，而是以原子核为中心的概率云。云的密度表示在特定位置找到电子的概率。这种模型取代了玻尔的行星式原子模型，更准确地描述了量子世界的实际情况。</p>
+            </div>
+            
+            <h3>5. 互补原理</h3>
+            <p>玻尔的互补原理指出，量子系统可以有多种互补的描述方式（如波动性和粒子性），但这些描述方式在任何实验中都不能同时被观察到。完整理解量子系统需要考虑所有这些互补的观点。</p>
+        </section>
+        
+        <section id="schrodinger-cat">
+            <h2>薛定谔猫：哥本哈根解释的思想实验</h2>
+            <p>奥地利物理学家埃尔温·薛定谔提出了一个著名的思想实验，用来强调量子叠加状态与日常宏观世界观的矛盾。</p>
+            
+            <div class="visualization">
+                <h4>薛定谔猫思想实验</h4>
+                <svg width="600" height="300" viewBox="0 0 600 300">
+                    <!-- Background -->
+                    <rect width="600" height="300" fill="#ffffff"></rect>
+                    
+                    <!-- Box -->
+                    <rect x="100" y="50" width="400" height="200" fill="#f4f4f4" stroke="#666" stroke-width="2"></rect>
+                    
+                    <!-- Radioactive source -->
+                    <circle cx="150" cy="200" r="15" fill="#27ae60"></circle>
+                    <text x="150" cy="230" text-anchor="middle" font-size="12">放射源</text>
+                    
+                    <!-- Mechanism -->
+                    <rect x="200" y="180" width="50" height="30" fill="#bdc3c7"></rect>
+                    <text x="225" y="230" text-anchor="middle" font-size="12">机械装置</text>
+                    
+                    <!-- Poison flask -->
+                    <path d="M 300,190 L 310,170 L 330,170 L 340,190 L 340,210 L 300,210 Z" fill="#8e44ad" stroke="#333" stroke-width="1"></path>
+                    <text x="320" y="230" text-anchor="middle" font-size="12">毒药</text>
+                    
+                    <!-- Cat - both states superimposed with transparency -->
+                    <g opacity="0.5">
+                        <!-- Alive cat -->
+                        <ellipse cx="410" cy="190" rx="50" ry="30" fill="#f39c12"></ellipse>
+                        <circle cx="440" cy="175" r="8" fill="#f39c12"></circle>
+                        <circle cx="443" cy="172" r="2" fill="#000"></circle>
+                        <path d="M 440,175 L 448,168" stroke="#000" stroke-width="1"></path>
+                        <path d="M 440,175 L 448,182" stroke="#000" stroke-width="1"></path>
+                    </g>
+                    
+                    <g opacity="0.5">
+                        <!-- Dead cat -->
+                        <ellipse cx="410" cy="190" rx="50" ry="30" fill="#f39c12"></ellipse>
+                        <circle cx="440" cy="175" r="8" fill="#f39c12"></circle>
+                        <path d="M 436,172 L 444,178" stroke="#000" stroke-width="1"></path>
+                        <path d="M 444,172 L 436,178" stroke="#000" stroke-width="1"></path>
+                    </g>
+                    
+                    <text x="410" y="230" text-anchor="middle" font-size="12">猫</text>
+                    
+                    <!-- Equations -->
+                    <text x="300" y="100" text-anchor="middle" font-size="16">|ψ⟩ = |未衰变⟩|活猫⟩ + |已衰变⟩|死猫⟩</text>
+                    <text x="300" y="75" text-anchor="middle" font-size="18" font-weight="bold">量子叠加态</text>
+                </svg>
+                <p>薛定谔猫思想实验中，一只猫被放在一个密闭的盒子里，盒中还有一个放射性原子、检测器和毒药。如果原子衰变，检测器会触发，释放毒药杀死猫。根据哥本哈根解释，在观察盒子之前，原子处于衰变和未衰变的叠加态，因此猫也处于生与死的叠加态。只有当我们打开盒子（即进行测量）时，波函数才会坍缩，猫的状态才会确定。</p>
+            </div>
+        </section>
+        
+        <section id="comparison">
+            <h2>哥本哈根解释与其他解释的比较</h2>
+            <div class="comparison">
+                <div class="comparison-item">
+                    <h3>哥本哈根解释</h3>
+                    <ul>
+                        <li>观测者在测量过程中扮演关键角色</li>
+                        <li>波函数描述知识而非实际存在</li>
+                        <li>强调测量导致波函数坍缩</li>
+                        <li>接受量子世界的统计性质</li>
+                    </ul>
+                </div>
+                <div class="comparison-item">
+                    <h3>多世界解释</h3>
+                    <ul>
+                        <li>没有波函数坍缩</li>
+                        <li>每次测量都创造平行宇宙</li>
+                        <li>所有可能的测量结果都在不同宇宙中实现</li>
+                        <li>避免了测量问题但引入无限多宇宙</li>
+                    </ul>
+                </div>
+                <div class="comparison-item">
+                    <h3>德布罗意-玻姆解释</h3>
+                    <ul>
+                        <li>隐变量理论</li>
+                        <li>粒子有确定的位置和速度</li>
+                        <li>波函数提供导引波场</li>
+                        <li>确定性但非局域性</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="conclusion">
+            <h2>结论</h2>
+            <p>哥本哈根解释尽管饱受争议，但仍是理解量子力学最广泛接受的框架之一。它不仅改变了我们对物理世界的认识，也对哲学、科学方法论甚至文化产生了深远影响。</p>
+            <p>正如理查德·费曼所说："我可以有把握地说，没有人真正理解量子力学。"哥本哈根解释提供了一种务实的方法来应用量子力学的数学，即使它的哲学含义仍然令人困惑。</p>
+            <p>随着量子计算、量子通信和量子密码学等新兴技术的发展，理解量子力学及其解释变得越来越重要，不仅对物理学家，对整个科技社会都是如此。</p>
+        </section>
+        
+        <div class="footnote">
+            <p>© 2025 量子力学教育资源 | 本页面内容仅用于教育目的</p>
+        </div>
+    </div>
+</body>
+</html>
