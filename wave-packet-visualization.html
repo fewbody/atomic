@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>量子波包可视化</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+        }
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="range"] {
+            flex: 1;
+        }
+        .value-display {
+            min-width: 50px;
+            text-align: center;
+            font-weight: bold;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        .explanation {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+            gap: 20px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .color-box {
+            width: 20px;
+            height: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>量子波包可视化</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="deltaP">动量不确定度 (Δp)：</label>
+                <div class="slider-container">
+                    <input type="range" id="deltaP" min="0.1" max="3" step="0.1" value="1">
+                    <span id="deltaPValue" class="value-display">1.0</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label for="k0">中心波数 (k₀)：</label>
+                <div class="slider-container">
+                    <input type="range" id="k0" min="0" max="20" step="1" value="10">
+                    <span id="k0Value" class="value-display">10</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="color-box" style="background-color: blue;"></div>
+                <span>波函数实部</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background-color: red;"></div>
+                <span>波函数虚部</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background-color: black;"></div>
+                <span>概率密度 |ψ|²</span>
+            </div>
+        </div>
+        
+        <canvas id="waveCanvas" width="800" height="400"></canvas>
+        
+        <div class="explanation">
+            <h3>物理原理说明：</h3>
+            <p>本可视化工具展示了不确定性原理在波函数波包中的体现。根据不确定性原理，位置不确定度(Δx)和动量不确定度(Δp)满足：</p>
+            <p style="text-align: center;">Δx · Δp ≥ ℏ/2</p>
+            <p>在本演示中，波函数表示为：</p>
+            <p style="text-align: center;">ψ(x) = A·exp(-x²/(4σ²)) · exp(i·k₀·x)</p>
+            <p>其中：</p>
+            <ul>
+                <li>σ = 1/(2·Δp) 是波包的宽度参数</li>
+                <li>k₀ 是中心波数，与平均动量p₀相关(p₀ = ℏk₀)</li>
+                <li>当 Δp 增大时，波包在位置空间变窄，波函数更加局域化</li>
+                <li>当 Δp 减小时，波包在位置空间变宽，波函数更加延展</li>
+            </ul>
+            <p>这体现了量子力学中的基本原理：越精确地测量粒子的位置，其动量的不确定性就越大；反之亦然。</p>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const canvas = document.getElementById('waveCanvas');
+        const ctx = canvas.getContext('2d');
+        const deltaPSlider = document.getElementById('deltaP');
+        const deltaPValue = document.getElementById('deltaPValue');
+        const k0Slider = document.getElementById('k0');
+        const k0Value = document.getElementById('k0Value');
+        
+        // 初始参数
+        let deltaP = parseFloat(deltaPSlider.value);
+        let k0 = parseInt(k0Slider.value);
+        
+        // 更新显示值
+        deltaPValue.textContent = deltaP.toFixed(1);
+        k0Value.textContent = k0;
+        
+        // 添加事件监听器
+        deltaPSlider.addEventListener('input', function() {
+            deltaP = parseFloat(this.value);
+            deltaPValue.textContent = deltaP.toFixed(1);
+            drawWavePacket();
+        });
+        
+        k0Slider.addEventListener('input', function() {
+            k0 = parseInt(this.value);
+            k0Value.textContent = k0;
+            drawWavePacket();
+        });
+        
+        // 主要绘图函数
+        function drawWavePacket() {
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 计算σ值 (假设ℏ=1)
+            const sigma = 1 / (2 * deltaP);
+            
+            // 绘制坐标轴
+            drawAxes();
+            
+            // 绘制波函数
+            drawWaveFunction(sigma, k0);
+        }
+        
+        // 绘制坐标轴
+        function drawAxes() {
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerY = height / 2;
+            
+            ctx.beginPath();
+            ctx.strokeStyle = '#888';
+            ctx.lineWidth = 1;
+            
+            // X轴
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(width, centerY);
+            
+            // Y轴刻度
+            ctx.moveTo(width / 2, 30);
+            ctx.lineTo(width / 2, height - 30);
+            
+            ctx.stroke();
+            
+            // 添加标签
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('x', width - 15, centerY - 10);
+            ctx.fillText('ψ(x)', width / 2 - 30, 40);
+        }
+        
+        // 绘制波函数
+        function drawWaveFunction(sigma, k0) {
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerY = height / 2;
+            
+            // 设置x的范围为(-15, 15)
+            const xMin = -15;
+            const xMax = 15;
+            
+            // 计算波函数的点
+            const points = [];
+            const realPoints = [];
+            const imagPoints = [];
+            const probPoints = [];
+            
+            // 计算归一化因子
+            const normFactor = 1 / (Math.sqrt(2 * Math.PI * sigma * sigma));
+            
+            // 采样点数
+            const numPoints = 1000;
+            
+            for (let i = 0; i < numPoints; i++) {
+                const x = xMin + (xMax - xMin) * i / (numPoints - 1);
+                
+                // 计算高斯包络
+                const envelope = normFactor * Math.exp(-x * x / (4 * sigma * sigma));
+                
+                // 计算波函数的实部和虚部
+                const phase = k0 * x;
+                const real = envelope * Math.cos(phase);
+                const imag = envelope * Math.sin(phase);
+                
+                // 计算概率密度 |ψ|²
+                const prob = envelope * envelope;
+                
+                // 转换为画布坐标
+                const xCanvas = (x - xMin) / (xMax - xMin) * width;
+                const yRealCanvas = centerY - real * height / 3;
+                const yImagCanvas = centerY - imag * height / 3;
+                const yProbCanvas = centerY - prob * height / 1.5;
+                
+                realPoints.push({ x: xCanvas, y: yRealCanvas });
+                imagPoints.push({ x: xCanvas, y: yImagCanvas });
+                probPoints.push({ x: xCanvas, y: yProbCanvas });
+            }
+            
+            // 绘制概率密度 |ψ|²
+            ctx.beginPath();
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+            
+            for (let i = 0; i < probPoints.length; i++) {
+                if (i === 0) {
+                    ctx.moveTo(probPoints[i].x, probPoints[i].y);
+                } else {
+                    ctx.lineTo(probPoints[i].x, probPoints[i].y);
+                }
+            }
+            
+            ctx.stroke();
+            
+            // 绘制波函数实部
+            ctx.beginPath();
+            ctx.strokeStyle = 'blue';
+            ctx.lineWidth = 1.5;
+            
+            for (let i = 0; i < realPoints.length; i++) {
+                if (i === 0) {
+                    ctx.moveTo(realPoints[i].x, realPoints[i].y);
+                } else {
+                    ctx.lineTo(realPoints[i].x, realPoints[i].y);
+                }
+            }
+            
+            ctx.stroke();
+            
+            // 绘制波函数虚部
+            ctx.beginPath();
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 1.5;
+            
+            for (let i = 0; i < imagPoints.length; i++) {
+                if (i === 0) {
+                    ctx.moveTo(imagPoints[i].x, imagPoints[i].y);
+                } else {
+                    ctx.lineTo(imagPoints[i].x, imagPoints[i].y);
+                }
+            }
+            
+            ctx.stroke();
+            
+            // 显示当前σ值
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(`位置不确定度(σₓ): ${sigma.toFixed(2)}`, 20, 30);
+            
+            // 添加标签到波包上
+            const maxX = width / 2;
+            const maxProbY = probPoints[Math.floor(numPoints / 2)].y;
+            
+            ctx.fillStyle = 'black';
+            ctx.textAlign = 'center';
+            ctx.fillText('|ψ|²', maxX, maxProbY - 10);
+            
+            const maxRealY = realPoints[Math.floor(numPoints / 2)].y;
+            ctx.fillStyle = 'blue';
+            ctx.fillText('Re(ψ)', maxX, maxRealY - 10);
+            
+            const maxImagY = imagPoints[Math.floor(numPoints / 2 + numPoints / 8)].y;
+            ctx.fillStyle = 'red';
+            ctx.fillText('Im(ψ)', maxX + width / 8, maxImagY - 10);
+        }
+        
+        // 初始绘制
+        drawWavePacket();
+    </script>
+</body>
+</html>
