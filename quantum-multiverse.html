@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>量子力学的多世界解释</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: #3498db;
+            margin-top: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        p {
+            font-size: 1.1em;
+        }
+        .visualization {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 30px 0;
+            text-align: center;
+        }
+        .comparison {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+        .comparison-item {
+            width: 30%;
+            min-width: 250px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .interactive {
+            margin: 40px 0;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            text-align: center;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .footnote {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 50px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>量子力学的多世界解释</h1>
+        <p>探索量子现实中的平行宇宙</p>
+    </header>
+
+    <section>
+        <h2>什么是多世界解释？</h2>
+        <p>多世界解释（Many-Worlds Interpretation，简称MWI）是量子力学的一种解释，由休·埃弗雷特三世（Hugh Everett III）于1957年提出。这一理论认为，每当量子系统面临"选择"时，宇宙并不是选择一个可能的结果，而是分裂成多个平行宇宙，每个宇宙对应一个可能的结果。</p>
+        
+        <p>与传统的哥本哈根解释不同，多世界解释否认了波函数坍缩的概念，而是坚持认为量子系统的演化严格遵循薛定谔方程，是完全确定性的。在这种解释下，我们所观察到的"随机性"仅仅是因为我们只能体验到众多平行世界中的一个。</p>
+        
+        <div class="visualization">
+            <svg width="800" height="300" viewBox="0 0 800 300">
+                <!-- 初始宇宙 -->
+                <circle cx="100" cy="150" r="30" fill="#3498db" />
+                <text x="100" y="150" text-anchor="middle" fill="white" dy=".3em">初始宇宙</text>
+                
+                <!-- 第一次分支 -->
+                <path d="M 130 150 Q 200 100, 270 100" stroke="#2ecc71" stroke-width="3" fill="none" />
+                <path d="M 130 150 Q 200 200, 270 200" stroke="#e74c3c" stroke-width="3" fill="none" />
+                
+                <circle cx="270" cy="100" r="25" fill="#2ecc71" />
+                <text x="270" y="100" text-anchor="middle" fill="white" dy=".3em">世界A</text>
+                
+                <circle cx="270" cy="200" r="25" fill="#e74c3c" />
+                <text x="270" y="200" text-anchor="middle" fill="white" dy=".3em">世界B</text>
+                
+                <!-- 第二次分支 -->
+                <path d="M 295 100 Q 350 70, 400 70" stroke="#2ecc71" stroke-width="2" fill="none" />
+                <path d="M 295 100 Q 350 130, 400 130" stroke="#2ecc71" stroke-width="2" fill="none" />
+                
+                <path d="M 295 200 Q 350 170, 400 170" stroke="#e74c3c" stroke-width="2" fill="none" />
+                <path d="M 295 200 Q 350 230, 400 230" stroke="#e74c3c" stroke-width="2" fill="none" />
+                
+                <circle cx="400" cy="70" r="20" fill="#2ecc71" opacity="0.8" />
+                <text x="400" y="70" text-anchor="middle" fill="white" dy=".3em" font-size="10">A1</text>
+                
+                <circle cx="400" cy="130" r="20" fill="#2ecc71" opacity="0.8" />
+                <text x="400" y="130" text-anchor="middle" fill="white" dy=".3em" font-size="10">A2</text>
+                
+                <circle cx="400" cy="170" r="20" fill="#e74c3c" opacity="0.8" />
+                <text x="400" y="170" text-anchor="middle" fill="white" dy=".3em" font-size="10">B1</text>
+                
+                <circle cx="400" cy="230" r="20" fill="#e74c3c" opacity="0.8" />
+                <text x="400" y="230" text-anchor="middle" fill="white" dy=".3em" font-size="10">B2</text>
+                
+                <!-- 更多分支 -->
+                <path d="M 420 70 Q 470 50, 520 50" stroke="#2ecc71" stroke-width="1.5" fill="none" />
+                <path d="M 420 70 Q 470 70, 520 70" stroke="#2ecc71" stroke-width="1.5" fill="none" />
+                <path d="M 420 130 Q 470 110, 520 110" stroke="#2ecc71" stroke-width="1.5" fill="none" />
+                <path d="M 420 130 Q 470 130, 520 130" stroke="#2ecc71" stroke-width="1.5" fill="none" />
+                <path d="M 420 170 Q 470 150, 520 170" stroke="#e74c3c" stroke-width="1.5" fill="none" />
+                <path d="M 420 170 Q 470 170, 520 190" stroke="#e74c3c" stroke-width="1.5" fill="none" />
+                <path d="M 420 230 Q 470 210, 520 230" stroke="#e74c3c" stroke-width="1.5" fill="none" />
+                <path d="M 420 230 Q 470 230, 520 250" stroke="#e74c3c" stroke-width="1.5" fill="none" />
+                
+                <!-- 无限扩展 -->
+                <text x="580" y="150" text-anchor="middle" fill="#333" font-size="40">...</text>
+                <text x="650" y="150" text-anchor="middle" fill="#333" font-size="18">无限宇宙</text>
+            </svg>
+            <p><strong>图1：多世界解释中的宇宙分支示意图</strong> - 每次量子测量都会导致宇宙分裂成多个平行世界</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>多世界解释的核心原理</h2>
+        <ol>
+            <li><strong>普适性</strong>：量子力学适用于所有系统，包括宏观物体</li>
+            <li><strong>线性性</strong>：薛定谔方程是线性的，没有特殊的观测过程</li>
+            <li><strong>相对状态</strong>：系统状态总是相对于其他系统而言的</li>
+            <li><strong>去中心化</strong>：没有特殊的观察者或测量设备</li>
+            <li><strong>确定性</strong>：全局波函数的演化是确定性的，没有"坍缩"</li>
+        </ol>
+        
+        <div class="interactive">
+            <h3>薛定谔猫思想实验与多世界解释</h3>
+            <svg id="cat-experiment" width="700" height="250" viewBox="0 0 700 250">
+                <!-- 初始状态 -->
+                <rect x="50" y="50" width="200" height="150" fill="#f1c40f" stroke="#333" stroke-width="2" rx="10" id="box" />
+                <text x="150" y="30" text-anchor="middle" font-size="16">薛定谔的盒子</text>
+                <circle cx="150" cy="125" r="40" fill="#bdc3c7" id="cat" />
+                <text x="150" y="125" text-anchor="middle" dy=".3em" id="cat-state">|初始态⟩</text>
+                
+                <!-- 分支箭头 -->
+                <path d="M 250 125 L 350 125" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)" id="arrow1" opacity="0" />
+                <path d="M 250 125 Q 300 75, 350 75" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)" id="arrow2" opacity="0" />
+                <path d="M 250 125 Q 300 175, 350 175" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)" id="arrow3" opacity="0" />
+                
+                <!-- 结果状态 -->
+                <rect x="350" y="25" width="150" height="100" fill="#2ecc71" stroke="#333" stroke-width="2" rx="10" id="outcome1" opacity="0" />
+                <text x="425" y="75" text-anchor="middle" dy=".3em" id="outcome1-text" opacity="0">猫存活</text>
+                
+                <rect x="350" y="150" width="150" height="100" fill="#e74c3c" stroke="#333" stroke-width="2" rx="10" id="outcome2" opacity="0" />
+                <text x="425" y="200" text-anchor="middle" dy=".3em" id="outcome2-text" opacity="0">猫死亡</text>
+                
+                <!-- 哥本哈根解释 vs 多世界解释 -->
+                <text x="600" y="75" text-anchor="middle" id="explanation1" font-size="14" opacity="0">哥本哈根解释：随机坍缩为一种状态</text>
+                <text x="600" y="200" text-anchor="middle" id="explanation2" font-size="14" opacity="0">多世界解释：两个世界同时存在</text>
+                
+                <!-- 箭头定义 -->
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+                    </marker>
+                </defs>
+            </svg>
+            <button id="runExperiment">运行薛定谔猫实验</button>
+            <script>
+                document.getElementById('runExperiment').addEventListener('click', function() {
+                    // 改变猫的状态为叠加态
+                    document.getElementById('cat').setAttribute('fill', '#9b59b6');
+                    document.getElementById('cat-state').textContent = '|叠加态⟩';
+                    
+                    // 显示箭头
+                    setTimeout(() => {
+                        document.getElementById('arrow1').setAttribute('opacity', '1');
+                        document.getElementById('arrow2').setAttribute('opacity', '1');
+                        document.getElementById('arrow3').setAttribute('opacity', '1');
+                        
+                        // 显示结果状态
+                        document.getElementById('outcome1').setAttribute('opacity', '1');
+                        document.getElementById('outcome2').setAttribute('opacity', '1');
+                        document.getElementById('outcome1-text').setAttribute('opacity', '1');
+                        document.getElementById('outcome2-text').setAttribute('opacity', '1');
+                        
+                        // 显示解释
+                        document.getElementById('explanation1').setAttribute('opacity', '1');
+                        document.getElementById('explanation2').setAttribute('opacity', '1');
+                    }, 1000);
+                    
+                    // 重置按钮文本
+                    this.textContent = '重新运行';
+                    
+                    // 创建重置函数
+                    this.onclick = function() {
+                        document.getElementById('cat').setAttribute('fill', '#bdc3c7');
+                        document.getElementById('cat-state').textContent = '|初始态⟩';
+                        document.getElementById('arrow1').setAttribute('opacity', '0');
+                        document.getElementById('arrow2').setAttribute('opacity', '0');
+                        document.getElementById('arrow3').setAttribute('opacity', '0');
+                        document.getElementById('outcome1').setAttribute('opacity', '0');
+                        document.getElementById('outcome2').setAttribute('opacity', '0');
+                        document.getElementById('outcome1-text').setAttribute('opacity', '0');
+                        document.getElementById('outcome2-text').setAttribute('opacity', '0');
+                        document.getElementById('explanation1').setAttribute('opacity', '0');
+                        document.getElementById('explanation2').setAttribute('opacity', '0');
+                        
+                        this.textContent = '运行薛定谔猫实验';
+                        this.onclick = arguments.callee;
+                    };
+                });
+            </script>
+        </div>
+    </section>
+
+    <section>
+        <h2>量子力学的不同解释比较</h2>
+        <div class="comparison">
+            <div class="comparison-item">
+                <h3>哥本哈根解释</h3>
+                <p>由尼尔斯·玻尔和维尔纳·海森堡等人提出</p>
+                <ul>
+                    <li>波函数描述概率分布</li>
+                    <li>测量导致波函数坍缩</li>
+                    <li>测量结果本质上是随机的</li>
+                    <li>量子与经典世界有明确界限</li>
+                </ul>
+            </div>
+            <div class="comparison-item">
+                <h3>多世界解释</h3>
+                <p>由休·埃弗雷特三世提出</p>
+                <ul>
+                    <li>波函数描述实际存在的实体</li>
+                    <li>没有波函数坍缩</li>
+                    <li>宇宙分裂成多个分支</li>
+                    <li>整体演化是确定性的</li>
+                </ul>
+            </div>
+            <div class="comparison-item">
+                <h3>德布罗意-玻姆解释</h3>
+                <p>由大卫·玻姆发展</p>
+                <ul>
+                    <li>粒子有确定的位置和轨迹</li>
+                    <li>波函数提供"引导波"</li>
+                    <li>非局域性和隐变量</li>
+                    <li>确定性但非局域的理论</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="visualization">
+            <svg width="800" height="300" viewBox="0 0 800 300">
+                <!-- 背景网格 -->
+                <defs>
+                    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eee" stroke-width="1"/>
+                    </pattern>
+                </defs>
+                <rect width="800" height="300" fill="url(#grid)" />
+                
+                <!-- 双缝实验设置 -->
+                <rect x="50" y="130" width="20" height="40" fill="#3498db" />
+                <text x="60" y="120" text-anchor="middle">电子源</text>
+                
+                <rect x="200" y="100" width="10" height="40" fill="#2c3e50" />
+                <rect x="200" y="160" width="10" height="40" fill="#2c3e50" />
+                <text x="205" y="80" text-anchor="middle">双缝</text>
+                
+                <rect x="400" y="50" width="5" height="200" fill="#ecf0f1" stroke="#bdc3c7" />
+                <text x="405" y="40" text-anchor="middle">屏幕</text>
+                
+                <!-- 波函数演化 - 哥本哈根解释 -->
+                <g id="copenhagen">
+                    <path d="M 70 150 Q 135 150, 200 150" stroke="#3498db" stroke-width="2" fill="none" />
+                    
+                    <!-- 通过缝隙的波 -->
+                    <path d="M 210 120 C 250 120, 300 140, 400 90" stroke="#3498db" stroke-width="2" fill="none" />
+                    <path d="M 210 180 C 250 180, 300 160, 400 210" stroke="#3498db" stroke-width="2" fill="none" />
+                    
+                    <!-- 干涉图案 -->
+                    <rect x="400" y="90" width="5" height="5" fill="#3498db" />
+                    <rect x="400" y="130" width="5" height="5" fill="#3498db" />
+                    <rect x="400" y="170" width="5" height="5" fill="#3498db" />
+                    <rect x="400" y="210" width="5" height="5" fill="#3498db" />
+                    
+                    <text x="500" y="150" text-anchor="middle">哥本哈根解释：波函数坍缩到一个位置</text>
+                </g>
+                
+                <!-- 多世界解释演化 -->
+                <g id="many-worlds" opacity="0">
+                    <path d="M 70 150 Q 135 150, 200 150" stroke="#e74c3c" stroke-width="2" fill="none" />
+                    
+                    <!-- 通过缝隙的波 -->
+                    <path d="M 210 120 C 250 120, 300 140, 400 90" stroke="#e74c3c" stroke-width="2" fill="none" />
+                    <path d="M 210 180 C 250 180, 300 160, 400 210" stroke="#e74c3c" stroke-width="2" fill="none" />
+                    
+                    <!-- 多世界分支 -->
+                    <path d="M 400 90 L 450 90" stroke="#e74c3c" stroke-width="2" fill="none" />
+                    <path d="M 400 130 L 450 130" stroke="#e74c3c" stroke-width="2" fill="none" />
+                    <path d="M 400 170 L 450 170" stroke="#e74c3c" stroke-width="2" fill="none" />
+                    <path d="M 400 210 L 450 210" stroke="#e74c3c" stroke-width="2" fill="none" />
+                    
+                    <text x="500" y="90" text-anchor="middle" font-size="12">世界1：电子在上方</text>
+                    <text x="500" y="130" text-anchor="middle" font-size="12">世界2：电子在中上方</text>
+                    <text x="500" y="170" text-anchor="middle" font-size="12">世界3：电子在中下方</text>
+                    <text x="500" y="210" text-anchor="middle" font-size="12">世界4：电子在下方</text>
+                    
+                    <text x="500" y="250" text-anchor="middle">多世界解释：所有可能性同时存在于不同世界</text>
+                </g>
+            </svg>
+            <div>
+                <button id="toggleInterpretation">切换到多世界解释视图</button>
+            </div>
+            <script>
+                document.getElementById('toggleInterpretation').addEventListener('click', function() {
+                    const copenhagenView = document.getElementById('copenhagen');
+                    const manyWorldsView = document.getElementById('many-worlds');
+                    
+                    if (copenhagenView.getAttribute('opacity') === '1' || copenhagenView.getAttribute('opacity') === null) {
+                        copenhagenView.setAttribute('opacity', '0');
+                        manyWorldsView.setAttribute('opacity', '1');
+                        this.textContent = '切换到哥本哈根解释视图';
+                    } else {
+                        copenhagenView.setAttribute('opacity', '1');
+                        manyWorldsView.setAttribute('opacity', '0');
+                        this.textContent = '切换到多世界解释视图';
+                    }
+                });
+            </script>
+            <p><strong>图2：双缝实验在不同解释下的视图</strong></p>
+        </div>
+    </section>
+
+    <section>
+        <h2>多世界解释的历史与发展</h2>
+        <p>多世界解释的历史可以追溯到20世纪50年代：</p>
+        <ul>
+            <li><strong>1957年</strong>：普林斯顿大学博士生休·埃弗雷特三世在约翰·惠勒的指导下提出"相对态"理论</li>
+            <li><strong>1970年代</strong>：布莱斯·德维特(Bryce DeWitt)将其推广并命名为"多世界"解释</li>
+            <li><strong>1980年代</strong>：大卫·多伊奇(David Deutsch)将量子计算与多世界解释联系起来</li>
+            <li><strong>现代发展</strong>：通过量子退相干理论解决了"首选基"问题</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>多世界解释的哲学与科学意义</h2>
+        <p>多世界解释不仅是一种物理理论，也引发了深刻的哲学思考：</p>
+        <ul>
+            <li><strong>确定性与随机性</strong>：宇宙整体是确定性的，但对单个观察者来说显得随机</li>
+            <li><strong>身份与意识</strong>：当宇宙分裂时，我们的意识如何"选择"哪个分支？</li>
+            <li><strong>概率解释</strong>：如何在所有可能的分支都实现的情况下解释量子概率？</li>
+            <li><strong>科学简约性</strong>：多世界解释避免了引入波函数坍缩这一额外假设</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>科学证据与实验检验</h2>
+        <p>虽然多世界解释目前难以直接通过实验验证，但其与量子力学的标准数学形式完全兼容。理论物理学家正在探索可能的间接证据：</p>
+        <ul>
+            <li>量子干涉实验</li>
+            <li>量子计算机的工作原理</li>
+            <li>量子退相干的研究</li>
+        </ul>
+        <p>值得注意的是，不同的量子力学解释在数学预测上是等价的，因此很难设计能够区分它们的实验。这使得多世界解释与其他解释之间的争论在很大程度上仍然是哲学性的。</p>
+    </section>
+
+    <div class="footnote">
+        <p>© 2025 - 量子力学多世界解释教育网页</p>
+        <p>注意：多世界解释是量子力学的一种理论解释，尽管它在物理学界有支持者，但并不是唯一被接受的解释。目前还没有决定性的实验能够证明哪种解释是正确的。</p>
+    </div>
+
+    <script>
+        // 确保页面加载后所有交互元素正常工作
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("页面加载完成，交互元素已初始化");
+        });
+    </script>
+</body>
+</html>
