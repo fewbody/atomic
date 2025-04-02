@@ -606,6 +606,114 @@
                     <p class="card-description">体验经典的双缝干涉实验，探索量子粒子的波粒二象性和测量对量子系统的影响。</p>
                     <a href="https://fewbody.com/atomic/double-slit-experiment.html" class="card-link">开始实验</a>
                 </div>
+                
+                <!-- Copenhagen Interpretation Card -->
+                <div class="card">
+                    <svg class="card-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="5" fill="#00FFFF">
+                            <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite" />
+                        </circle>
+                        
+                        <!-- Probability cloud -->
+                        <circle cx="50" cy="50" r="25" fill="none" stroke="#8A2BE2" stroke-width="1" stroke-opacity="0.2" />
+                        <circle cx="50" cy="50" r="20" fill="none" stroke="#8A2BE2" stroke-width="1" stroke-opacity="0.4" />
+                        <circle cx="50" cy="50" r="15" fill="none" stroke="#8A2BE2" stroke-width="1" stroke-opacity="0.6" />
+                        <circle cx="50" cy="50" r="10" fill="none" stroke="#8A2BE2" stroke-width="1" stroke-opacity="0.8" />
+                        
+                        <!-- Observer eye symbol -->
+                        <ellipse cx="70" cy="35" rx="10" ry="5" fill="none" stroke="#FF00FF" stroke-width="2" />
+                        <circle cx="70" cy="35" r="3" fill="#FF00FF">
+                            <animate attributeName="r" values="3;4;3" dur="2s" repeatCount="indefinite" />
+                        </circle>
+                        
+                        <!-- Wavefunction collapse lines -->
+                        <line x1="30" y1="70" x2="70" y2="30" stroke="#FF00FF" stroke-width="1" stroke-dasharray="3,3">
+                            <animate attributeName="stroke-opacity" values="0.2;1;0.2" dur="4s" repeatCount="indefinite" />
+                        </line>
+                        <line x1="30" y1="30" x2="70" y2="70" stroke="#FF00FF" stroke-width="1" stroke-dasharray="3,3">
+                            <animate attributeName="stroke-opacity" values="0.2;1;0.2" dur="4s" repeatCount="indefinite" begin="2s" />
+                        </line>
+                    </svg>
+                    
+                    <h3 class="card-title">量子力学的哥本哈根解释</h3>
+                    <p class="card-description">探索由玻尔、海森堡等提出的量子力学经典解释，理解波函数坍缩和测量问题的本质。</p>
+                    <a href="https://fewbody.com/atomic/quantum-copenhagen.html" class="card-link">开始探索</a>
+                </div>
+                
+                <!-- Many-Worlds Interpretation Card -->
+                <div class="card">
+                    <svg class="card-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Central point -->
+                        <circle cx="50" cy="40" r="4" fill="#00FFFF">
+                            <animate attributeName="r" values="4;5;4" dur="2s" repeatCount="indefinite" />
+                        </circle>
+                        
+                        <!-- Branching paths representing multiple universes -->
+                        <path d="M 50,45 L 50,55 L 30,75" fill="none" stroke="#8A2BE2" stroke-width="2">
+                            <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite" />
+                        </path>
+                        <path d="M 50,45 L 50,55 L 70,75" fill="none" stroke="#FF00FF" stroke-width="2">
+                            <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite" begin="1.5s" />
+                        </path>
+                        
+                        <!-- Small world circles at the end of branches -->
+                        <circle cx="30" cy="75" r="5" fill="none" stroke="#8A2BE2" stroke-width="1">
+                            <animate attributeName="r" values="5;6;5" dur="4s" repeatCount="indefinite" />
+                        </circle>
+                        <circle cx="70" cy="75" r="5" fill="none" stroke="#FF00FF" stroke-width="1">
+                            <animate attributeName="r" values="5;6;5" dur="4s" repeatCount="indefinite" begin="2s" />
+                        </circle>
+                        
+                        <!-- Additional branching -->
+                        <path d="M 30,75 L 20,85" fill="none" stroke="#8A2BE2" stroke-width="1" stroke-dasharray="2,2" />
+                        <path d="M 30,75 L 40,85" fill="none" stroke="#8A2BE2" stroke-width="1" stroke-dasharray="2,2" />
+                        <path d="M 70,75 L 60,85" fill="none" stroke="#FF00FF" stroke-width="1" stroke-dasharray="2,2" />
+                        <path d="M 70,75 L 80,85" fill="none" stroke="#FF00FF" stroke-width="1" stroke-dasharray="2,2" />
+                    </svg>
+                    
+                    <h3 class="card-title">量子力学的多世界解释</h3>
+                    <p class="card-description">探讨由休·埃弗雷特提出的多世界理论，理解量子叠加状态可能导致的平行宇宙概念。</p>
+                    <a href="https://fewbody.com/atomic/quantum-multiverse.html" class="card-link">开始探索</a>
+                </div>
+                
+                <!-- Wave Packet Visualization Card -->
+                <div class="card">
+                    <svg class="card-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Coordinate axes -->
+                        <line x1="20" y1="70" x2="80" y2="70" stroke="#00FFFF" stroke-width="1" />
+                        <line x1="20" y1="30" x2="20" y2="70" stroke="#00FFFF" stroke-width="1" />
+                        
+                        <!-- Wave packet -->
+                        <path d="M 20,70 C 25,70 30,60 35,55 C 40,50 45,45 50,50 C 55,55 60,70 65,55 C 70,40 75,55 80,70" fill="none" stroke="#8A2BE2" stroke-width="2">
+                            <animate attributeName="d" 
+                                     values="M 20,70 C 25,70 30,60 35,55 C 40,50 45,45 50,50 C 55,55 60,70 65,55 C 70,40 75,55 80,70; 
+                                             M 20,70 C 25,70 30,70 35,65 C 40,60 45,40 50,45 C 55,50 60,65 65,70 C 70,60 75,65 80,70; 
+                                             M 20,70 C 25,70 30,60 35,55 C 40,50 45,45 50,50 C 55,55 60,70 65,55 C 70,40 75,55 80,70" 
+                                     dur="6s" 
+                                     repeatCount="indefinite" />
+                        </path>
+                        
+                        <!-- Probability envelope -->
+                        <path d="M 20,70 Q 35,40 50,50 Q 65,60 80,70" fill="none" stroke="#FF00FF" stroke-width="1" stroke-dasharray="3,3">
+                            <animate attributeName="d" 
+                                     values="M 20,70 Q 35,40 50,50 Q 65,60 80,70; 
+                                             M 20,70 Q 35,50 50,35 Q 65,50 80,70; 
+                                             M 20,70 Q 35,40 50,50 Q 65,60 80,70" 
+                                     dur="6s" 
+                                     repeatCount="indefinite" />
+                        </path>
+                        
+                        <!-- Moving particle -->
+                        <circle cx="35" cy="55" r="2" fill="#00FFFF">
+                            <animate attributeName="cx" values="35;50;65;50;35" dur="6s" repeatCount="indefinite" />
+                            <animate attributeName="cy" values="55;50;55;50;55" dur="6s" repeatCount="indefinite" />
+                        </circle>
+                    </svg>
+                    
+                    <h3 class="card-title">量子波包可视化</h3>
+                    <p class="card-description">通过交互式模拟观察量子波包的演化、传播和衍射，理解量子力学中波函数的物理意义。</p>
+                    <a href="https://fewbody.com/atomic/wave-packet-visualization.html" class="card-link">开始实验</a>
+                </div>
             </div>
         </div>
     </div>
